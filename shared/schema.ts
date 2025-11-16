@@ -33,6 +33,9 @@ export const leitos = pgTable("cdg_leito", {
   pkleito: serial("pkleito").primaryKey(),
   descricao: text("descricao"),
   numero: text("numero"),
+  // Adicionar chaves estrangeiras para Posto e Enfermaria se existirem
+  // fkposto: integer("fkposto"),
+  // fkenfermaria: integer("fkenfermaria"),
 }, { schema: "sotech" });
 
 // Tabela de especialidades
@@ -85,11 +88,20 @@ export type UnidadeSaude = {
   cnes?: string;
 };
 
-export type Leito = {
+// Modificado para refletir a nova estrutura P.E.L
+export interface Posto {
   id: number;
   descricao: string;
-  numero?: string;
-};
+}
+
+export interface Leito {
+  id: number;
+  numero: string;
+  posto?: string;
+  enfermaria?: string;
+  leito?: string;
+}
+
 
 export type Especialidade = {
   id: number;
@@ -116,11 +128,7 @@ export type PacienteInternado = {
     id: number;
     descricao: string;
   };
-  leito: {
-    id: number;
-    descricao: string;
-    numero?: string;
-  } | null;
+  leito: Leito | null; // Usa o novo tipo Leito
   especialidade: {
     id: number;
     descricao: string;
@@ -134,16 +142,17 @@ export type PacienteInternado = {
   queixaPrincipal?: string;
 };
 
-export type FiltrosPacientes = {
+// Modificado para usar postoId ao invés de leitoId
+export interface FiltrosPacientes {
   medicoId?: number;
   pacienteId?: number;
   unidadeId?: number;
-  leitoId?: number;
+  postoId?: number;
   dataInicio?: string;
   dataFim?: string;
   especialidadeId?: number;
   procedimentoId?: number;
-};
+}
 
 export type Indicadores = {
   totalPacientes: number;

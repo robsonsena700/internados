@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X, Filter } from "lucide-react";
-import type { Medico, Paciente, UnidadeSaude, Leito, Especialidade, Procedimento, FiltrosPacientes } from "@shared/schema";
+import type { Medico, Paciente, UnidadeSaude, Posto, Especialidade, Procedimento, FiltrosPacientes } from "@shared/schema";
 
 interface FiltrosPacientesProps {
   filtros: FiltrosPacientes;
@@ -25,8 +25,8 @@ export function FiltrosPacientes({ filtros, onFiltrosChange }: FiltrosPacientesP
     queryKey: ["/api/unidades"],
   });
 
-  const { data: leitos } = useQuery<Leito[]>({
-    queryKey: ["/api/leitos"],
+  const { data: postos } = useQuery<Posto[]>({
+    queryKey: ["/api/postos"],
   });
 
   const { data: especialidades } = useQuery<Especialidade[]>({
@@ -138,21 +138,21 @@ export function FiltrosPacientes({ filtros, onFiltrosChange }: FiltrosPacientesP
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="leito" className="text-sm font-medium">
-              Leito
+            <Label htmlFor="posto" className="text-sm font-medium">
+              Posto
             </Label>
             <Select
-              value={filtros.leitoId?.toString() || "all"}
-              onValueChange={(value) => handleChange("leitoId", value === "all" ? undefined : value)}
+              value={filtros.postoId?.toString() || "all"}
+              onValueChange={(value) => handleChange("postoId", value === "all" ? undefined : value)}
             >
-              <SelectTrigger id="leito" data-testid="select-leito">
-                <SelectValue placeholder="Todos os leitos" />
+              <SelectTrigger id="posto" data-testid="select-posto">
+                <SelectValue placeholder="Todos os postos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os leitos</SelectItem>
-                {leitos?.map((leito) => (
-                  <SelectItem key={leito.id} value={leito.id.toString()}>
-                    {leito.descricao}
+                <SelectItem value="all">Todos os postos</SelectItem>
+                {postos?.map((posto) => (
+                  <SelectItem key={posto.id} value={posto.id.toString()}>
+                    {posto.descricao}
                   </SelectItem>
                 ))}
               </SelectContent>

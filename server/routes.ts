@@ -37,7 +37,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/medicos", requireAuth);
   app.use("/api/pacientes", requireAuth);
   app.use("/api/unidades", requireAuth);
-  app.use("/api/leitos", requireAuth);
+  app.use("/api/postos", requireAuth);
   app.use("/api/especialidades", requireAuth);
   app.use("/api/procedimentos", requireAuth);
   app.use("/api/pacientes-internados", requireAuth);
@@ -103,23 +103,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Listar leitos
-  app.get("/api/leitos", async (req, res) => {
+  // Listar postos
+  app.get("/api/postos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT DISTINCT l.pkleito as id, l.codleito as numero 
-         FROM sotech.cdg_leito l
+        `SELECT DISTINCT p.pkposto as id, p.posto as descricao 
+         FROM sotech.cdg_posto p
+         INNER JOIN sotech.cdg_enfermaria e ON e.fkposto = p.pkposto
+         INNER JOIN sotech.cdg_leito l ON l.fkenfermaria = e.pkenfermaria
          INNER JOIN sotech.ate_atendimento a ON a.fkleito = l.pkleito
          WHERE a.fktipoatendimento = 2
            AND a.datasaida IS NULL
            AND a.ativo = true
-           AND l.ativo = true
-         ORDER BY l.codleito`
+           AND p.ativo = true
+         ORDER BY p.posto`
       );
       res.json(result.rows);
     } catch (error) {
-      console.error("Erro ao buscar leitos:", error);
-      res.status(500).json({ message: "Erro ao buscar leitos" });
+      console.error("Erro ao buscar postos:", error);
+      res.status(500).json({ message: "Erro ao buscar postos" });
     }
   });
 
@@ -170,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         medicoId,
         pacienteId,
         unidadeId,
-        leitoId,
+        postoId,
         dataInicio,
         dataFim,
         especialidadeId,
@@ -189,7 +191,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           jsonb_build_object('id', u.pkunidadesaude, 'descricao', u.unidadesaude) as unidadeSaude,
           CASE 
             WHEN l.pkleito IS NOT NULL 
-            THEN jsonb_build_object('id', l.pkleito, 'numero', l.codleito)
+            THEN jsonb_build_object(
+              'id', l.pkleito, 
+              'numero', COALESCE(po.posto, '') || '.' || COALESCE(en.enfermaria, '') || '.' || COALESCE(l.codleito, ''),
+              'posto', po.posto,
+              'enfermaria', en.enfermaria,
+              'leito', l.codleito
+            )
             ELSE NULL
           END as leito,
           CASE 
@@ -204,12 +212,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           END as procedimento,
           a.dataentrada as "dataEntrada",
           EXTRACT(DAY FROM (NOW() - a.dataentrada))::integer as "diasInternado",
-          a.queixaprincipal as "queixaPrincipal"
+          a.queixaprincipal as "queixaPrincipal",
+          u.unidadesaude as unidade_ordem,
+          po.posto as posto_ordem,
+          en.enfermaria as enfermaria_ordem,
+          l.codleito as leito_ordem
         FROM sotech.ate_atendimento a
         INNER JOIN sotech.cdg_paciente p ON p.pkpaciente = a.fkpaciente
         INNER JOIN sotech.cdg_unidadesaude u ON u.pkunidadesaude = a.fkunidadesaude
         LEFT JOIN sotech.cdg_interveniente m ON m.pkinterveniente = a.fkprofissionalatendimento
         LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
+        LEFT JOIN sotech.cdg_enfermaria en ON en.pkenfermaria = l.fkenfermaria
+        LEFT JOIN sotech.cdg_posto po ON po.pkposto = en.fkposto
         LEFT JOIN sotech.tbn_especialidade e ON e.pkespecialidade = a.fkespecialidade
         LEFT JOIN sotech.tbl_procedimento pr ON pr.pkprocedimento = a.fkprocedimentosolicitado
         WHERE a.fktipoatendimento = 2
@@ -238,9 +252,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paramIndex++;
       }
 
-      if (leitoId) {
-        query += ` AND a.fkleito = $${paramIndex}`;
-        params.push(parseInt(leitoId as string));
+      if (postoId) {
+        query += ` AND po.pkposto = $${paramIndex}`;
+        params.push(parseInt(postoId as string));
         paramIndex++;
       }
 
@@ -268,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paramIndex++;
       }
 
-      query += ` ORDER BY a.dataentrada DESC LIMIT 100`;
+      query += ` ORDER BY u.unidadesaude, po.posto, en.enfermaria, l.codleito LIMIT 100`;
 
       const result = await pool.query(query, params);
       res.json(result.rows);
@@ -285,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         medicoId,
         pacienteId,
         unidadeId,
-        leitoId,
+        postoId,
         dataInicio,
         dataFim,
         especialidadeId,
@@ -296,6 +310,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         WHERE a.fktipoatendimento = 2
           AND a.datasaida IS NULL
           AND a.ativo = true
+      `;
+
+      let baseJoin = `
+        FROM sotech.ate_atendimento a
+        LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
+        LEFT JOIN sotech.cdg_enfermaria en ON en.pkenfermaria = l.fkenfermaria
+        LEFT JOIN sotech.cdg_posto po ON po.pkposto = en.fkposto
       `;
 
       const params: any[] = [];
@@ -319,9 +340,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paramIndex++;
       }
 
-      if (leitoId) {
-        baseWhere += ` AND a.fkleito = $${paramIndex}`;
-        params.push(parseInt(leitoId as string));
+      if (postoId) {
+        baseWhere += ` AND po.pkposto = $${paramIndex}`;
+        params.push(parseInt(postoId as string));
         paramIndex++;
       }
 
@@ -352,7 +373,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Total de pacientes
       const totalQuery = `
         SELECT COUNT(*) as total
-        FROM sotech.ate_atendimento a
+        ${baseJoin}
         ${baseWhere}
       `;
       const totalResult = await pool.query(totalQuery, params);
@@ -361,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Média de dias internados
       const mediaQuery = `
         SELECT AVG(EXTRACT(DAY FROM (NOW() - a.dataentrada))) as media
-        FROM sotech.ate_atendimento a
+        ${baseJoin}
         ${baseWhere}
       `;
       const mediaResult = await pool.query(mediaQuery, params);
@@ -379,6 +400,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           COALESCE(e.especialidade, 'Sem especialidade') as especialidade,
           COUNT(*) as quantidade
         FROM sotech.ate_atendimento a
+        LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
+        LEFT JOIN sotech.cdg_enfermaria en ON en.pkenfermaria = l.fkenfermaria
+        LEFT JOIN sotech.cdg_posto po ON po.pkposto = en.fkposto
         LEFT JOIN sotech.tbn_especialidade e ON e.pkespecialidade = a.fkespecialidade
         ${baseWhere}
         GROUP BY e.especialidade
