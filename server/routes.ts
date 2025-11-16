@@ -47,10 +47,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/medicos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkinterveniente as id, nome 
+        `SELECT pkinterveniente as id, interveniente as nome 
          FROM sotech.cdg_interveniente 
          WHERE ativo = true 
-         ORDER BY nome 
+         ORDER BY interveniente 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -64,10 +64,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pacientes", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkpaciente as id, nome 
+        `SELECT pkpaciente as id, paciente as nome 
          FROM sotech.cdg_paciente 
          WHERE ativo = true 
-         ORDER BY nome 
+         ORDER BY paciente 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -81,10 +81,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/unidades", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkunidadesaude as id, descricao 
+        `SELECT pkunidadesaude as id, unidadesaude as descricao 
          FROM sotech.cdg_unidadesaude 
          WHERE ativo = true 
-         ORDER BY descricao 
+         ORDER BY unidadesaude 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -98,10 +98,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/leitos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkleito as id, descricao, numero 
+        `SELECT pkleito as id, codleito as numero 
          FROM sotech.cdg_leito 
          WHERE ativo = true 
-         ORDER BY numero, descricao 
+         ORDER BY codleito 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -115,10 +115,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/especialidades", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkespecialidade as id, descricao 
+        `SELECT pkespecialidade as id, especialidade as descricao 
          FROM sotech.tbn_especialidade 
          WHERE ativo = true 
-         ORDER BY descricao 
+         ORDER BY especialidade 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -132,10 +132,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/procedimentos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkprocedimento as id, descricao, codigo 
+        `SELECT pkprocedimento as id, procedimento as descricao, codprocedimento as codigo 
          FROM sotech.tbl_procedimento 
          WHERE ativo = true 
-         ORDER BY descricao 
+         ORDER BY procedimento 
          LIMIT 100`
       );
       res.json(result.rows);
@@ -162,26 +162,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let query = `
         SELECT 
           a.pkatendimento,
-          jsonb_build_object('id', p.pkpaciente, 'nome', p.nome) as paciente,
+          jsonb_build_object('id', p.pkpaciente, 'nome', p.paciente) as paciente,
           CASE 
             WHEN m.pkinterveniente IS NOT NULL 
-            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.nome)
+            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.interveniente)
             ELSE NULL
           END as medico,
-          jsonb_build_object('id', u.pkunidadesaude, 'descricao', u.descricao) as unidadeSaude,
+          jsonb_build_object('id', u.pkunidadesaude, 'descricao', u.unidadesaude) as unidadeSaude,
           CASE 
             WHEN l.pkleito IS NOT NULL 
-            THEN jsonb_build_object('id', l.pkleito, 'descricao', l.descricao, 'numero', l.numero)
+            THEN jsonb_build_object('id', l.pkleito, 'numero', l.codleito)
             ELSE NULL
           END as leito,
           CASE 
             WHEN e.pkespecialidade IS NOT NULL 
-            THEN jsonb_build_object('id', e.pkespecialidade, 'descricao', e.descricao)
+            THEN jsonb_build_object('id', e.pkespecialidade, 'descricao', e.especialidade)
             ELSE NULL
           END as especialidade,
           CASE 
             WHEN pr.pkprocedimento IS NOT NULL 
-            THEN jsonb_build_object('id', pr.pkprocedimento, 'descricao', pr.descricao)
+            THEN jsonb_build_object('id', pr.pkprocedimento, 'descricao', pr.procedimento)
             ELSE NULL
           END as procedimento,
           a.dataentrada as "dataEntrada",
@@ -358,12 +358,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Distribuição por especialidades
       const especialidadesQuery = `
         SELECT 
-          COALESCE(e.descricao, 'Sem especialidade') as especialidade,
+          COALESCE(e.especialidade, 'Sem especialidade') as especialidade,
           COUNT(*) as quantidade
         FROM sotech.ate_atendimento a
         LEFT JOIN sotech.tbn_especialidade e ON e.pkespecialidade = a.fkespecialidade
         ${baseWhere}
-        GROUP BY e.descricao
+        GROUP BY e.especialidade
         ORDER BY quantidade DESC
         LIMIT 5
       `;
