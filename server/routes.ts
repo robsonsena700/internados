@@ -49,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await pool.query(
         `SELECT DISTINCT i.pkinterveniente as id, i.interveniente as nome 
          FROM sotech.cdg_interveniente i
-         INNER JOIN sotech.ate_atendimento a ON a.fkprofissionalatendimento = i.pkinterveniente
+         INNER JOIN sotech.ate_atendimento a ON a.fkprofissionalsolicitante = i.pkinterveniente
          WHERE a.fktipoatendimento = 2
            AND a.datasaida IS NULL
            AND a.ativo = true
