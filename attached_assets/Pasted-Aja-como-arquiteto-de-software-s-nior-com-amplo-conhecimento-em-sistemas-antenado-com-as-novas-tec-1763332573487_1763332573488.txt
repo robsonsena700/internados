@@ -1,0 +1,304 @@
+Aja como arquiteto de software sênior, com amplo conhecimento em sistemas, antenado com as novas tecnologias, principalmente relativas ao desenvolvimento de aplicações baseadas em microsserviços, com amplos conhecimentos na área de saúde pública do Brasil.
+
+Faça uma aplicação para exibição de dashboard de acompanhamento de pacientes internado. Essa aplicação deverá ter uma linha de filtros dinâmicos montados de acordo com os dados da consulta, seguida de uma segunda linha de cards informativos com indicadores calculados com base na consulta e por fim uma lista com informações dos pacientes filtrados.
+
+Desenvolva a aplicação em react e node js, sempre responsiva de forma a poder ser utilizada em celulares e tablets.
+
+Não crie nenhum banco de dados nem estrutura de migrations, pois vamos utilizar um banco de dados existentes com tabelas e estruturas já criadas. Vou lhe passar as estruturas das tabelas para que seja feito o mapeamento dos dados. 
+Você deve preparar a aplicação para conectar o banco de dados via variáveis de ambiente pelo secrets do replit.
+
+Crie um sistema de autenticação simples de usuário e senha com os perfis admin e operador, sendo o usuário admin tendo senha @dm1n e o usuário operador com senha Oper4321. Deixa a autenticação preparada para ser trocada em breve por um sistema mais robusto.
+
+Vou lhe passar os DDLs de todas as tabelas para mapeamento dos dados:
+
+A tabela principal a ser usar é a sotech.ate_atendimento onde são armazenados todos os atendimentos realizados. Segue estrutura da tabela e de relacionamentos para mapeamento dela e da outra necessárias.
+
+CREATE TABLE sotech.ate_atendimento (
+  pkatendimento SERIAL,
+  fktipoatendimento INTEGER NOT NULL,
+  fkcarater INTEGER,
+  fkpaciente INTEGER DEFAULT 0 NOT NULL,
+  fksetor INTEGER,
+  fkprofissionalatendimento INTEGER,
+  fkprofissionalalta INTEGER,
+  fkmotivoalta INTEGER,
+  fkunidadesaude INTEGER NOT NULL,
+  fkplanoconvenio INTEGER NOT NULL,
+  fkmotivoatendimento INTEGER,
+  fktipochegada INTEGER,
+  fklocalocorrencia INTEGER,
+  fkunidadeprocedencia INTEGER,
+  dataentrada TIMESTAMP WITHOUT TIME ZONE DEFAULT now() NOT NULL,
+  datasaida TIMESTAMP WITHOUT TIME ZONE,
+  socorrista TEXT,
+  numerocarteira TEXT,
+  validadecarteira DATE,
+  codatendimento CHAR(10),
+  peso NUMERIC(15,2),
+  temperatura NUMERIC(15,2),
+  sisprenatal TEXT,
+  fkespecialidade INTEGER,
+  fkprofissionalsolicitante INTEGER,
+  autorizacao TEXT,
+  fkusuarioentrada INTEGER NOT NULL,
+  fkusuariosaida INTEGER,
+  fkprocedimentosolicitado INTEGER,
+  fkprocedimentorealizado INTEGER,
+  fkcidprincipal INTEGER,
+  fkcidsecundario INTEGER,
+  fkturno INTEGER,
+  competencia CHAR(6),
+  fkclassificacaorisco INTEGER,
+  fkleito INTEGER,
+  senha INTEGER,
+  sistole INTEGER,
+  diastole INTEGER,
+  fkestado INTEGER DEFAULT 1 NOT NULL,
+  queixaprincipal TEXT,
+  fkprioridade INTEGER,
+  classificado BOOLEAN DEFAULT false,
+  urgente INTEGER DEFAULT 1,
+  fkuser INTEGER DEFAULT 0 NOT NULL,
+  laudo TEXT,
+  datacadastro TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT now() NOT NULL,
+  anamnese TEXT,
+  dataautorizacao TIMESTAMP(0) WITHOUT TIME ZONE,
+  validadeautorizacao DATE,
+  fkcidobito INTEGER,
+  numerodeclaracaoobito TEXT,
+  fkunidadesaudetransferencia INTEGER,
+  dias SMALLINT,
+  chave TEXT,
+  dataprimeirossintomas DATE,
+  fkatendimento INTEGER,
+  version INTEGER DEFAULT 0 NOT NULL,
+  virtual BOOLEAN DEFAULT false,
+  avaliacao INTEGER,
+  fktipoaih INTEGER,
+  fkprofissionalautorizador INTEGER,
+  sugestoeselogios TEXT,
+  senhais TEXT,
+  transaction TEXT,
+  uuid UUID DEFAULT sotech.uuid_generate_v4() NOT NULL,
+  datainitratamento DATE,
+  datafimtratamento DATE,
+  fkcidsecundario2 INTEGER,
+  fkcidsecundario3 INTEGER,
+  fkcidcausasassociadas INTEGER,
+  fkdestinopaciente INTEGER,
+  dataatualizacao TIMESTAMP WITHOUT TIME ZONE,
+  assinado BOOLEAN DEFAULT false NOT NULL,
+  geradoviaportal BOOLEAN,
+  ativo BOOLEAN DEFAULT true NOT NULL,
+  aguardando_sala BOOLEAN,
+  justificativacancelamento TEXT,
+  isolamento BOOLEAN DEFAULT false NOT NULL,
+  autorizaalta BOOLEAN,
+  statusteleconsulta TEXT,
+  emobservacao BOOLEAN DEFAULT false,
+  motivoreclassificacao TEXT,
+  CONSTRAINT sotech_ate_atendimento_pkey PRIMARY KEY(pkatendimento),
+  CONSTRAINT sotech_ate_atendimento_unq_autorizacao UNIQUE(fkunidadesaude, fkplanoconvenio, autorizacao),
+  CONSTRAINT sotech_ate_atendimento_unq_chave UNIQUE(chave),
+  CONSTRAINT sotech_ate_atendimento_unq_codatendimento UNIQUE(fkunidadesaude, codatendimento),
+  CONSTRAINT sotech_ate_atendimento_unq_uuid UNIQUE(uuid),
+  CONSTRAINT sotech_ate_atendimento_fkatendimento FOREIGN KEY (fkatendimento)
+    REFERENCES sotech.ate_atendimento(pkatendimento)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcarater FOREIGN KEY (fkcarater)
+    REFERENCES sotech.tbn_carater(pkcarater)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidcausasassociadas FOREIGN KEY (fkcidcausasassociadas)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidobito FOREIGN KEY (fkcidobito)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidprincipal FOREIGN KEY (fkcidprincipal)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidsecundario FOREIGN KEY (fkcidsecundario)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidsecundario2 FOREIGN KEY (fkcidsecundario2)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkcidsecundario3 FOREIGN KEY (fkcidsecundario3)
+    REFERENCES sotech.tbn_cid(pkcid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkclassificacaorisco FOREIGN KEY (fkclassificacaorisco)
+    REFERENCES sotech.ate_classificacaorisco(pkclassificacaorisco)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkdestinopaciente FOREIGN KEY (fkdestinopaciente)
+    REFERENCES sotech.tbn_destino_paciente(pkdestinopaciente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkespecialidade FOREIGN KEY (fkespecialidade)
+    REFERENCES sotech.tbn_especialidade(pkespecialidade)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkestado FOREIGN KEY (fkestado)
+    REFERENCES sotech.ate_estado(pkestado)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkleito FOREIGN KEY (fkleito)
+    REFERENCES sotech.cdg_leito(pkleito)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fklocalocorrencia FOREIGN KEY (fklocalocorrencia)
+    REFERENCES sotech.ate_localocorrencia(pklocalocorrencia)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkmotivoalta FOREIGN KEY (fkmotivoalta)
+    REFERENCES sotech.tbn_motivo(pkmotivo)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkmotivoatendimento FOREIGN KEY (fkmotivoatendimento)
+    REFERENCES sotech.ate_motivoatendimento(pkmotivoatendimento)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkpaciente FOREIGN KEY (fkpaciente)
+    REFERENCES sotech.cdg_paciente(pkpaciente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkplanoconvenio FOREIGN KEY (fkplanoconvenio)
+    REFERENCES sotech.cnv_planoconvenio(pkplanoconvenio)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprioridade FOREIGN KEY (fkprioridade)
+    REFERENCES sotech.ate_prioridade(pkprioridade)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprocedimentorealizado FOREIGN KEY (fkprocedimentorealizado)
+    REFERENCES sotech.tbl_procedimento(pkprocedimento)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprocedimentosolicitado FOREIGN KEY (fkprocedimentosolicitado)
+    REFERENCES sotech.tbl_procedimento(pkprocedimento)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprofissionalalta FOREIGN KEY (fkprofissionalalta)
+    REFERENCES sotech.cdg_interveniente(pkinterveniente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprofissionalatendimento FOREIGN KEY (fkprofissionalatendimento)
+    REFERENCES sotech.cdg_interveniente(pkinterveniente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprofissionalautorizador FOREIGN KEY (fkprofissionalautorizador)
+    REFERENCES sotech.cdg_interveniente(pkinterveniente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkprofissionalsolicitante FOREIGN KEY (fkprofissionalsolicitante)
+    REFERENCES sotech.cdg_interveniente(pkinterveniente)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fksetor FOREIGN KEY (fksetor)
+    REFERENCES sotech.cdg_setor(pksetor)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fktipoaih FOREIGN KEY (fktipoaih)
+    REFERENCES sotech.tbn_tipoaih(pktipoaih)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fktipoatendimento FOREIGN KEY (fktipoatendimento)
+    REFERENCES sotech.tbl_tipoatendimento(pktipoatendimento)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fktipochegada FOREIGN KEY (fktipochegada)
+    REFERENCES sotech.tbl_tipochegada(pktipochegada)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkturno FOREIGN KEY (fkturno)
+    REFERENCES sotech.ate_turnos(pkturno)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkunidadeprocedencia FOREIGN KEY (fkunidadeprocedencia)
+    REFERENCES sotech.cdg_unidadesaude(pkunidadesaude)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkunidadesaude FOREIGN KEY (fkunidadesaude)
+    REFERENCES sotech.cdg_unidadesaude(pkunidadesaude)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkunidadesaudetransferencia FOREIGN KEY (fkunidadesaudetransferencia)
+    REFERENCES sotech.cdg_unidadesaude(pkunidadesaude)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkuser FOREIGN KEY (fkuser)
+    REFERENCES ish.sys_usuario(pkusuario)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkusuarioentrada FOREIGN KEY (fkusuarioentrada)
+    REFERENCES ish.sys_usuario(pkusuario)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE,
+  CONSTRAINT sotech_ate_atendimento_fkusuariosaida FOREIGN KEY (fkusuariosaida)
+    REFERENCES ish.sys_usuario(pkusuario)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+    NOT DEFERRABLE
+) 
+WITH (oids = false);
+
+A primeira consulta de vamos criar é a de pacientes internados. Pra isso, utilize todos os pacientes em que o valor de sotech.ate_atendimento.fktipoatendimento for igual a 2 e o valor de datasaida for null.
+
+Traga os seguintes filtros:
+
+Médico assistente: fkprofissionalatendimento
+Paciente: fkpaciente
+Unidade de atendimento: fkunidadesaude
+Leito: fkleito
+Data de internação: dataentrada
+Especialidade: fkespecialidade
+Procedimento solicitado: fkprocedimentosolicitado
+
+Todos os dados que iniciam do fk são chaves estrangeiras, devendo ser apresentados nos filtros os valores destas chaves obtidos a partir das tabelas relacionadas. Para isso, no mapeamento dos dados, busque toda integridade referencial necessária.
+
+Nesta primeira implementação, traga na lista os mesmos dados que foram informados para os filtros. Depois vamos ajustando.
+
+O banco de dados será configurado via secrets, por tanto, para realização do mameamento do banco de dados, será necessário que os variáveis de conexão sejam informadas.
