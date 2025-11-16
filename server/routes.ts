@@ -47,11 +47,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/medicos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkinterveniente as id, interveniente as nome 
-         FROM sotech.cdg_interveniente 
-         WHERE ativo = true 
-         ORDER BY interveniente 
-         LIMIT 100`
+        `SELECT DISTINCT i.pkinterveniente as id, i.interveniente as nome 
+         FROM sotech.cdg_interveniente i
+         INNER JOIN sotech.ate_atendimento a ON a.fkprofissionalatendimento = i.pkinterveniente
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND i.ativo = true
+         ORDER BY i.interveniente`
       );
       res.json(result.rows);
     } catch (error) {
@@ -64,11 +67,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pacientes", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkpaciente as id, paciente as nome 
-         FROM sotech.cdg_paciente 
-         WHERE ativo = true 
-         ORDER BY paciente 
-         LIMIT 100`
+        `SELECT DISTINCT p.pkpaciente as id, p.paciente as nome 
+         FROM sotech.cdg_paciente p
+         INNER JOIN sotech.ate_atendimento a ON a.fkpaciente = p.pkpaciente
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND p.ativo = true
+         ORDER BY p.paciente`
       );
       res.json(result.rows);
     } catch (error) {
@@ -81,11 +87,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/unidades", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkunidadesaude as id, unidadesaude as descricao 
-         FROM sotech.cdg_unidadesaude 
-         WHERE ativo = true 
-         ORDER BY unidadesaude 
-         LIMIT 100`
+        `SELECT DISTINCT u.pkunidadesaude as id, u.unidadesaude as descricao 
+         FROM sotech.cdg_unidadesaude u
+         INNER JOIN sotech.ate_atendimento a ON a.fkunidadesaude = u.pkunidadesaude
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND u.ativo = true
+         ORDER BY u.unidadesaude`
       );
       res.json(result.rows);
     } catch (error) {
@@ -98,11 +107,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/leitos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkleito as id, codleito as numero 
-         FROM sotech.cdg_leito 
-         WHERE ativo = true 
-         ORDER BY codleito 
-         LIMIT 100`
+        `SELECT DISTINCT l.pkleito as id, l.codleito as numero 
+         FROM sotech.cdg_leito l
+         INNER JOIN sotech.ate_atendimento a ON a.fkleito = l.pkleito
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND l.ativo = true
+         ORDER BY l.codleito`
       );
       res.json(result.rows);
     } catch (error) {
@@ -115,11 +127,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/especialidades", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkespecialidade as id, especialidade as descricao 
-         FROM sotech.tbn_especialidade 
-         WHERE ativo = true 
-         ORDER BY especialidade 
-         LIMIT 100`
+        `SELECT DISTINCT e.pkespecialidade as id, e.especialidade as descricao 
+         FROM sotech.tbn_especialidade e
+         INNER JOIN sotech.ate_atendimento a ON a.fkespecialidade = e.pkespecialidade
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND e.ativo = true
+         ORDER BY e.especialidade`
       );
       res.json(result.rows);
     } catch (error) {
@@ -132,11 +147,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/procedimentos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT pkprocedimento as id, procedimento as descricao, codprocedimento as codigo 
-         FROM sotech.tbl_procedimento 
-         WHERE ativo = true 
-         ORDER BY procedimento 
-         LIMIT 100`
+        `SELECT DISTINCT pr.pkprocedimento as id, pr.procedimento as descricao, pr.codprocedimento as codigo 
+         FROM sotech.tbl_procedimento pr
+         INNER JOIN sotech.ate_atendimento a ON a.fkprocedimentosolicitado = pr.pkprocedimento
+         WHERE a.fktipoatendimento = 2
+           AND a.datasaida IS NULL
+           AND a.ativo = true
+           AND pr.ativo = true
+         ORDER BY pr.procedimento`
       );
       res.json(result.rows);
     } catch (error) {
