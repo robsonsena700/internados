@@ -17,9 +17,7 @@ export default function Dashboard() {
     if (filtros.medicoId) params.append("medicoId", filtros.medicoId.toString());
     if (filtros.pacienteId) params.append("pacienteId", filtros.pacienteId.toString());
     if (filtros.unidadeId) params.append("unidadeId", filtros.unidadeId.toString());
-    if (filtros.leitoId) params.append("leitoId", filtros.leitoId.toString());
-    if (filtros.dataInicio) params.append("dataInicio", filtros.dataInicio);
-    if (filtros.dataFim) params.append("dataFim", filtros.dataFim);
+    if (filtros.postoId) params.append("postoId", filtros.postoId.toString());
     if (filtros.especialidadeId) params.append("especialidadeId", filtros.especialidadeId.toString());
     if (filtros.procedimentoId) params.append("procedimentoId", filtros.procedimentoId.toString());
     return params.toString();

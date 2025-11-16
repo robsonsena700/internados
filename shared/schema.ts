@@ -148,8 +148,6 @@ export interface FiltrosPacientes {
   pacienteId?: number;
   unidadeId?: number;
   postoId?: number;
-  dataInicio?: string;
-  dataFim?: string;
   especialidadeId?: number;
   procedimentoId?: number;
 }

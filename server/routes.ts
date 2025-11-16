@@ -8,15 +8,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      
+
       const user = await authenticateUser(username, password);
-      
+
       if (!user) {
         return res.status(401).json({ message: "Usuário ou senha inválidos" });
       }
 
       req.session.user = user;
-      
+
       res.json({ success: true, user });
     } catch (error) {
       console.error("Erro no login:", error);
@@ -66,16 +66,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Listar pacientes
   app.get("/api/pacientes", async (req, res) => {
     try {
-      const result = await pool.query(
-        `SELECT DISTINCT p.pkpaciente as id, p.paciente as nome 
-         FROM sotech.cdg_paciente p
-         INNER JOIN sotech.ate_atendimento a ON a.fkpaciente = p.pkpaciente
-         WHERE a.fktipoatendimento = 2
-           AND a.datasaida IS NULL
-           AND a.ativo = true
-           AND p.ativo = true
-         ORDER BY p.paciente`
-      );
+      const { search } = req.query; // Filtro de busca por nome
+      let query = `
+        SELECT DISTINCT p.pkpaciente as id, p.paciente as nome 
+        FROM sotech.cdg_paciente p
+        INNER JOIN sotech.ate_atendimento a ON a.fkpaciente = p.pkpaciente
+        WHERE a.fktipoatendimento = 2
+          AND a.datasaida IS NULL
+          AND a.ativo = true
+          AND p.ativo = true
+      `;
+
+      const params: any[] = [];
+      let paramIndex = 1;
+
+      if (search) {
+        query += ` AND LOWER(p.paciente) LIKE $${paramIndex}`;
+        params.push(`%${(search as string).toLowerCase()}%`);
+        paramIndex++;
+      }
+
+      query += ` ORDER BY p.paciente`;
+
+      const result = await pool.query(query, params);
       res.json(result.rows);
     } catch (error) {
       console.error("Erro ao buscar pacientes:", error);
@@ -173,8 +186,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pacienteId,
         unidadeId,
         postoId,
-        dataInicio,
-        dataFim,
         especialidadeId,
         procedimentoId,
       } = req.query;
@@ -258,18 +269,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paramIndex++;
       }
 
-      if (dataInicio) {
-        query += ` AND a.dataentrada >= $${paramIndex}`;
-        params.push(dataInicio);
-        paramIndex++;
-      }
-
-      if (dataFim) {
-        query += ` AND a.dataentrada <= $${paramIndex}`;
-        params.push(dataFim);
-        paramIndex++;
-      }
-
       if (especialidadeId) {
         query += ` AND a.fkespecialidade = $${paramIndex}`;
         params.push(parseInt(especialidadeId as string));
@@ -300,8 +299,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pacienteId,
         unidadeId,
         postoId,
-        dataInicio,
-        dataFim,
         especialidadeId,
         procedimentoId,
       } = req.query;
@@ -343,18 +340,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (postoId) {
         baseWhere += ` AND po.pkposto = $${paramIndex}`;
         params.push(parseInt(postoId as string));
-        paramIndex++;
-      }
-
-      if (dataInicio) {
-        baseWhere += ` AND a.dataentrada >= $${paramIndex}`;
-        params.push(dataInicio);
-        paramIndex++;
-      }
-
-      if (dataFim) {
-        baseWhere += ` AND a.dataentrada <= $${paramIndex}`;
-        params.push(dataFim);
         paramIndex++;
       }
 
