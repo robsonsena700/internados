@@ -1,9 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import type { PacienteInternado } from "@shared/schema";
 
 interface ListaPacientesProps {
@@ -14,17 +12,15 @@ interface ListaPacientesProps {
 export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-4">
-                <Skeleton className="h-12 flex-1" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <Card key={i}>
+            <CardContent className="p-6">
+              <Skeleton className="h-24 w-full" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     );
   }
 
@@ -45,118 +41,126 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
     );
   }
 
-  return (
-    <>
-      {/* Desktop View - Table */}
-      <div className="hidden md:block">
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Paciente</TableHead>
-                  <TableHead>Leito</TableHead>
-                  <TableHead>Médico Assistente</TableHead>
-                  <TableHead>Data Internação</TableHead>
-                  <TableHead>Dias Internado</TableHead>
-                  <TableHead>Especialidade</TableHead>
-                  <TableHead>Procedimento</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pacientes.map((paciente) => (
-                  <TableRow key={paciente.pkatendimento} data-testid={`row-paciente-${paciente.pkatendimento}`}>
-                    <TableCell className="font-medium" data-testid={`text-paciente-nome-${paciente.pkatendimento}`}>
-                      {paciente.paciente.nome}
-                    </TableCell>
-                    <TableCell data-testid={`text-leito-${paciente.pkatendimento}`}>
-                      {paciente.leito ? (
-                        <Badge variant="outline">
-                          {paciente.leito.numero || paciente.leito.descricao}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Sem leito</span>
-                      )}
-                    </TableCell>
-                    <TableCell data-testid={`text-medico-${paciente.pkatendimento}`}>
-                      {paciente.medico?.nome || (
-                        <span className="text-muted-foreground text-sm">Não atribuído</span>
-                      )}
-                    </TableCell>
-                    <TableCell data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
-                      {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
-                    </TableCell>
-                    <TableCell data-testid={`text-dias-internado-${paciente.pkatendimento}`}>
-                      <Badge>
-                        {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell data-testid={`text-especialidade-${paciente.pkatendimento}`}>
-                      {paciente.especialidade?.descricao || (
-                        <span className="text-muted-foreground text-sm">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell data-testid={`text-procedimento-${paciente.pkatendimento}`}>
-                      {paciente.procedimento?.descricao || (
-                        <span className="text-muted-foreground text-sm">-</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
+  const calcularIdade = (dataNascimento: string) => {
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
+    }
+    return idade;
+  };
 
-      {/* Mobile View - Cards */}
-      <div className="md:hidden space-y-4">
-        {pacientes.map((paciente) => (
-          <Card key={paciente.pkatendimento} data-testid={`card-paciente-${paciente.pkatendimento}`}>
-            <CardContent className="p-4">
-              <div className="space-y-3">
+  return (
+    <div className="space-y-4">
+      {pacientes.map((paciente) => (
+        <Card key={paciente.pkatendimento} data-testid={`card-paciente-${paciente.pkatendimento}`}>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {/* Coluna 1: Posto, Enfermaria e Leito */}
+              <div className="space-y-2">
                 <div>
-                  <h3 className="font-semibold text-base" data-testid={`text-paciente-nome-mobile-${paciente.pkatendimento}`}>
-                    {paciente.paciente.nome}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {paciente.medico?.nome || "Sem médico atribuído"}
+                  <p className="text-xs text-muted-foreground">Posto</p>
+                  <p className="text-sm font-medium" data-testid={`text-posto-${paciente.pkatendimento}`}>
+                    {paciente.leito?.posto?.descricao || (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </p>
                 </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Enfermaria</p>
+                  <p className="text-sm font-medium" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
+                    {paciente.leito?.enfermaria?.descricao || (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Leito</p>
+                  {paciente.leito ? (
+                    <Badge variant="outline" data-testid={`text-leito-${paciente.pkatendimento}`}>
+                      {paciente.leito.numero || paciente.leito.descricao}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">Sem leito</span>
+                  )}
+                </div>
+              </div>
 
-                <div className="grid grid-cols-3 gap-2 text-sm">
+              {/* Coluna 2: Nome do Paciente (2 linhas) + Idade e Sexo */}
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs text-muted-foreground">Paciente</p>
+                  <p className="text-lg font-semibold leading-tight" data-testid={`text-paciente-nome-${paciente.pkatendimento}`}>
+                    {paciente.paciente.nome}
+                  </p>
+                </div>
+                <div className="flex gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground text-xs">Leito</p>
-                    <p className="font-medium">
-                      {paciente.leito ? paciente.leito.numero || paciente.leito.descricao : "-"}
-                    </p>
+                    <span className="text-muted-foreground">Idade: </span>
+                    <span className="font-medium" data-testid={`text-paciente-idade-${paciente.pkatendimento}`}>
+                      {paciente.paciente.dataNascimento 
+                        ? `${calcularIdade(paciente.paciente.dataNascimento)} anos`
+                        : '-'}
+                    </span>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Dias</p>
-                    <p className="font-medium">{paciente.diasInternado}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Internação</p>
-                    <p className="font-medium">
-                      {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                      })}
-                    </p>
+                    <span className="text-muted-foreground">Sexo: </span>
+                    <span className="font-medium" data-testid={`text-paciente-sexo-${paciente.pkatendimento}`}>
+                      {paciente.paciente.sexo === 'M' ? 'Masculino' : paciente.paciente.sexo === 'F' ? 'Feminino' : '-'}
+                    </span>
                   </div>
                 </div>
-
-                {paciente.especialidade && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Especialidade</p>
-                    <p className="text-sm">{paciente.especialidade.descricao}</p>
-                  </div>
-                )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </>
+
+              {/* Coluna 3: Médico Solicitante, Especialidade e Procedimento */}
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs text-muted-foreground">Médico Solicitante</p>
+                  <p className="text-sm font-medium" data-testid={`text-medico-${paciente.pkatendimento}`}>
+                    {paciente.medico?.nome || (
+                      <span className="text-muted-foreground">Não atribuído</span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Especialidade</p>
+                  <p className="text-sm font-medium" data-testid={`text-especialidade-${paciente.pkatendimento}`}>
+                    {paciente.especialidade?.descricao || (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Procedimento</p>
+                  <p className="text-sm font-medium" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
+                    {paciente.procedimento?.descricao || (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Coluna 4: Data de Internação e Dias Internado */}
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs text-muted-foreground">Data de Internação</p>
+                  <p className="text-sm font-medium" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
+                    {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Tempo de Internação</p>
+                  <Badge data-testid={`text-dias-internado-${paciente.pkatendimento}`}>
+                    {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 }
