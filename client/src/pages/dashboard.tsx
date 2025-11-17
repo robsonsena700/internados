@@ -10,6 +10,64 @@ import { useLocation } from "wouter";
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [filtros, setFiltros] = useState<FiltrosType>({});
+  const [showFiltros, setShowFiltros] = useState(true);
+  const [showIndicadores, setShowIndicadores] = useState(true);
+  const [maxLinhas, setMaxLinhas] = useState<number | undefined>(undefined);
+  
+  // Processar parâmetros da URL na inicialização
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    
+    // Parâmetro login: se false, redireciona assumindo usuário admin
+    const loginParam = params.get('login');
+    if (loginParam === 'false') {
+      // Auto-login como admin sem mostrar tela de login
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'admin', password: '@dm1n' })
+      }).catch(console.error);
+    }
+    
+    // Parâmetro filtro: mostra/oculta accordion de filtros
+    const filtroParam = params.get('filtro');
+    if (filtroParam === 'false') {
+      setShowFiltros(false);
+    }
+    
+    // Parâmetro ind: mostra/oculta cards de indicadores
+    const indParam = params.get('ind');
+    if (indParam === 'false') {
+      setShowIndicadores(false);
+    }
+    
+    // Parâmetro unidade: filtra pela unidade e desabilita o filtro
+    const unidadeParam = params.get('unidade');
+    if (unidadeParam) {
+      const unidadeId = parseInt(unidadeParam);
+      if (!isNaN(unidadeId)) {
+        setFiltros(prev => ({ ...prev, unidadeId }));
+      }
+    }
+    
+    // Parâmetro posto: filtra pelo posto e desabilita o filtro
+    const postoParam = params.get('posto');
+    if (postoParam) {
+      const postoId = parseInt(postoParam);
+      if (!isNaN(postoId)) {
+        setFiltros(prev => ({ ...prev, postoId }));
+      }
+    }
+    
+    // Parâmetro linhas: limita o número de linhas mostradas
+    const linhasParam = params.get('linhas');
+    if (linhasParam) {
+      const linhas = parseInt(linhasParam);
+      if (!isNaN(linhas) && linhas > 0) {
+        setMaxLinhas(linhas);
+      }
+    }
+  }, []);
 
   // Construir query params dos filtros
   const buildQueryParams = (filtros: FiltrosType) => {
@@ -46,13 +104,18 @@ export default function Dashboard() {
     }
   }, [errorPacientes, setLocation]);
 
+  // Aplicar limite de linhas se especificado
+  const pacientesFiltrados = maxLinhas && pacientes 
+    ? pacientes.slice(0, maxLinhas) 
+    : pacientes;
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <FiltrosPacientes filtros={filtros} onFiltrosChange={setFiltros} />
-        <CardsIndicadores indicadores={indicadores} isLoading={isLoadingIndicadores} />
-        <ListaPacientes pacientes={pacientes} isLoading={isLoadingPacientes} />
+        {showFiltros && <FiltrosPacientes filtros={filtros} onFiltrosChange={setFiltros} />}
+        {showIndicadores && <CardsIndicadores indicadores={indicadores} isLoading={isLoadingIndicadores} />}
+        <ListaPacientes pacientes={pacientesFiltrados} isLoading={isLoadingPacientes} />
       </main>
     </div>
   );

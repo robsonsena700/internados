@@ -16,6 +16,12 @@ interface FiltrosPacientesProps {
   onFiltrosChange: (filtros: FiltrosPacientes) => void;
 }
 
+// Verificar se filtros foram passados via URL
+const isFilterLockedByUrl = (filterName: string) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.has(filterName);
+};
+
 export function FiltrosPacientes({ filtros, onFiltrosChange }: FiltrosPacientesProps) {
   const [buscaPaciente, setBuscaPaciente] = useState("");
   
@@ -199,6 +205,7 @@ export function FiltrosPacientes({ filtros, onFiltrosChange }: FiltrosPacientesP
                     <Select
                       value={filtros.unidadeId?.toString() || "all"}
                       onValueChange={(value) => handleChange("unidadeId", value === "all" ? undefined : value)}
+                      disabled={isFilterLockedByUrl("unidade")}
                     >
                       <SelectTrigger id="unidade" data-testid="select-unidade">
                         <SelectValue placeholder="Todas as unidades" />
@@ -221,6 +228,7 @@ export function FiltrosPacientes({ filtros, onFiltrosChange }: FiltrosPacientesP
                     <Select
                       value={filtros.postoId?.toString() || "all"}
                       onValueChange={(value) => handleChange("postoId", value === "all" ? undefined : value)}
+                      disabled={isFilterLockedByUrl("posto")}
                     >
                       <SelectTrigger id="posto" data-testid="select-posto">
                         <SelectValue placeholder="Todos os postos" />
