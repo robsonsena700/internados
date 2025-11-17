@@ -97,9 +97,15 @@ export interface Posto {
 export interface Leito {
   id: number;
   numero: string;
-  posto?: string;
-  enfermaria?: string;
-  leito?: string;
+  descricao?: string;
+  posto?: {
+    id: number;
+    descricao: string;
+  };
+  enfermaria?: {
+    id: number;
+    descricao: string;
+  };
 }
 
 

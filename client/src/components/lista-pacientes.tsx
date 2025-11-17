@@ -63,11 +63,11 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
                   {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
                 </p>
-                <p className="text-xs font-bold leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
-                  {paciente.leito?.enfermaria?.descricao || 'Enfermaria não definida'}
+                <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
+                  {paciente.leito?.enfermaria?.descricao || 'ENFERMARIA NÃO DEFINIDA'}
                 </p>
                 <p className="text-xs font-bold leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
-                  {paciente.leito ? `Leito ${paciente.leito.numero || paciente.leito.descricao}` : 'Sem leito'}
+                  {paciente.leito?.descricao ? `Leito ${paciente.leito.descricao}` : 'Leito não definido'}
                 </p>
               </div>
 
