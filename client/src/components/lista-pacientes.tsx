@@ -57,63 +57,59 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
       {pacientes.map((paciente) => (
         <Card key={paciente.pkatendimento} data-testid={`card-paciente-${paciente.pkatendimento}`}>
           <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
               {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) */}
-              <div className="space-y-0.5">
-                <p className="text-sm font-semibold uppercase" data-testid={`text-posto-${paciente.pkatendimento}`}>
-                  {paciente.leito?.posto?.descricao || '-'}
+              <div className="space-y-0">
+                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
+                  {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
                 </p>
-                <p className="text-sm text-muted-foreground" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
-                  {paciente.leito?.enfermaria?.descricao || '-'}
+                <p className="text-sm font-normal leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
+                  {paciente.leito?.enfermaria?.descricao || 'Enfermaria não definida'}
                 </p>
-                <div>
-                  {paciente.leito ? (
-                    <Badge variant="outline" className="text-xs" data-testid={`text-leito-${paciente.pkatendimento}`}>
-                      Leito {paciente.leito.numero || paciente.leito.descricao}
-                    </Badge>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Sem leito</span>
-                  )}
-                </div>
+                <p className="text-sm font-normal leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
+                  {paciente.leito ? `Leito ${paciente.leito.numero || paciente.leito.descricao}` : 'Sem leito'}
+                </p>
               </div>
 
               {/* Coluna 2: Paciente */}
-              <div>
-                <p className="text-base font-semibold leading-tight mb-1" data-testid={`text-paciente-nome-${paciente.pkatendimento}`}>
+              <div className="space-y-1">
+                <Badge 
+                  variant="default" 
+                  className="text-sm font-semibold px-4 py-1.5 bg-purple-500 hover:bg-purple-600" 
+                  data-testid={`text-paciente-nome-${paciente.pkatendimento}`}
+                >
                   {paciente.paciente.nome}
-                </p>
-                <p className="text-sm text-muted-foreground" data-testid={`text-paciente-idade-${paciente.pkatendimento}`}>
+                </Badge>
+                <p className="text-sm text-muted-foreground mt-1" data-testid={`text-paciente-idade-${paciente.pkatendimento}`}>
                   {paciente.paciente.dataNascimento 
                     ? `${calcularIdade(paciente.paciente.dataNascimento)} anos`
-                    : '-'}
-                  {' • '}
-                  <span data-testid={`text-paciente-sexo-${paciente.pkatendimento}`}>
-                    {paciente.paciente.sexo === 'M' ? 'Masculino' : paciente.paciente.sexo === 'F' ? 'Feminino' : '-'}
-                  </span>
+                    : 'Idade não informada'}
                 </p>
               </div>
 
-              {/* Coluna 3: Médico, Especialidade e Procedimento */}
-              <div className="space-y-0.5">
-                <p className="text-sm font-medium" data-testid={`text-medico-${paciente.pkatendimento}`}>
-                  {paciente.medico?.nome || (
-                    <span className="text-muted-foreground">Médico não atribuído</span>
-                  )}
+              {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento */}
+              <div className="space-y-0">
+                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-medico-${paciente.pkatendimento}`}>
+                  {paciente.medico?.nome || 'PROFISSIONAL NÃO ATRIBUÍDO'}
                 </p>
-                <p className="text-sm text-muted-foreground" data-testid={`text-especialidade-${paciente.pkatendimento}`}>
-                  {paciente.especialidade?.descricao || '-'}
+                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-especialidade-${paciente.pkatendimento}`}>
+                  {paciente.especialidade?.descricao || 'Especialidade não definida'}
                 </p>
-                <p className="text-sm text-muted-foreground" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
-                  {paciente.procedimento?.descricao || '-'}
+                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
+                  {paciente.procedimento?.descricao || 'Procedimento não definido'}
                 </p>
               </div>
 
               {/* Coluna 4: Data e Tempo de Internação */}
-              <div className="space-y-1">
-                <p className="text-sm" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
+              <div className="space-y-1 text-right md:text-left">
+                <p className="text-sm font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
                   {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
                 </p>
-                <Badge variant="default" data-testid={`text-dias-internado-${paciente.pkatendimento}`}>
+                <Badge 
+                  variant="default" 
+                  className="bg-blue-500 hover:bg-blue-600 text-sm px-3 py-1" 
+                  data-testid={`text-dias-internado-${paciente.pkatendimento}`}
+                >
                   {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
                 </Badge>
               </div>
