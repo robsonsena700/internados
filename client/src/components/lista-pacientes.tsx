@@ -83,13 +83,10 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   data-testid={`text-paciente-nome-${paciente.pkatendimento}`}
                 >
                   {paciente.paciente.nome}
+                  {paciente.paciente.dataNascimento && 
+                    ` (${calcularIdade(paciente.paciente.dataNascimento)} anos)`
+                  }
                 </Badge>
-                <p className="text-sm text-muted-foreground mt-1" data-testid={`text-paciente-idade-${paciente.pkatendimento}`}>
-                  {paciente.paciente.dataNascimento 
-                    ? `${calcularIdade(paciente.paciente.dataNascimento)} anos`
-                    : 'Idade não informada'}
-                  {paciente.paciente.sexo && ` • ${paciente.paciente.sexo}`}
-                </p>
               </div>
 
               {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento */}
