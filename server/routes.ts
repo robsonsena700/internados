@@ -235,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           l.codleito as leito_ordem
         FROM sotech.ate_atendimento a
         INNER JOIN sotech.cdg_paciente p ON p.pkpaciente = a.fkpaciente
-        LEFT JOIN sotech.cdg_sexo s ON s.pksexo = p.fksexo
+        LEFT JOIN sotech.tbl_sexo s ON s.pksexo = p.fksexo
         INNER JOIN sotech.cdg_unidadesaude u ON u.pkunidadesaude = a.fkunidadesaude
         LEFT JOIN sotech.cdg_interveniente m ON m.pkinterveniente = a.fkprofissionalatendimento
         LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
