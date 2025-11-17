@@ -104,8 +104,8 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
 
               {/* Coluna 4: Data e Tempo de Internação */}
               <div className="space-y-1 text-right md:text-left">
-                <p className="text-sm font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
-                  {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
+                <p className="text-xs font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
+                  Desde de {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
                 </p>
                 <Badge 
                   variant="default" 
