@@ -210,7 +210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             THEN jsonb_build_object(
               'id', l.pkleito, 
               'numero', COALESCE(po.posto, '') || '.' || COALESCE(en.enfermaria, '') || '.' || COALESCE(l.codleito, ''),
-              'descricao', l.leito,
+              'descricao', l.codleito,
               'posto', jsonb_build_object('id', po.pkposto, 'descricao', po.posto),
               'enfermaria', jsonb_build_object('id', en.pkenfermaria, 'descricao', en.enfermaria)
             )
