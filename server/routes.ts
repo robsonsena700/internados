@@ -201,7 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ) as paciente,
           CASE 
             WHEN m.pkinterveniente IS NOT NULL 
-            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.interveniente)
+            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.apelido)
             ELSE NULL
           END as medico,
           jsonb_build_object('id', u.pkunidadesaude, 'descricao', u.unidadesaude) as unidadeSaude,
