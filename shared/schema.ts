@@ -119,6 +119,8 @@ export type PacienteInternado = {
   paciente: {
     id: number;
     nome: string;
+    dataNascimento?: string;
+    sexo?: string;
   };
   medico: {
     id: number;

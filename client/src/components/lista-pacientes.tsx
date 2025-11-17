@@ -75,7 +75,11 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               <div className="space-y-1">
                 <Badge 
                   variant="default" 
-                  className="text-sm font-semibold px-4 py-1.5 bg-purple-500 hover:bg-purple-600" 
+                  className={`text-sm font-semibold px-4 py-1.5 whitespace-normal leading-tight ${
+                    paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
+                      ? 'bg-blue-500 hover:bg-blue-600' 
+                      : 'bg-pink-500 hover:bg-pink-600'
+                  }`}
                   data-testid={`text-paciente-nome-${paciente.pkatendimento}`}
                 >
                   {paciente.paciente.nome}
@@ -84,6 +88,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   {paciente.paciente.dataNascimento 
                     ? `${calcularIdade(paciente.paciente.dataNascimento)} anos`
                     : 'Idade não informada'}
+                  {paciente.paciente.sexo && ` • ${paciente.paciente.sexo}`}
                 </p>
               </div>
 

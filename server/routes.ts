@@ -193,7 +193,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let query = `
         SELECT 
           a.pkatendimento,
-          jsonb_build_object('id', p.pkpaciente, 'nome', p.paciente) as paciente,
+          jsonb_build_object(
+            'id', p.pkpaciente, 
+            'nome', p.paciente,
+            'dataNascimento', p.datanascimento,
+            'sexo', s.sexo
+          ) as paciente,
           CASE 
             WHEN m.pkinterveniente IS NOT NULL 
             THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.interveniente)
@@ -230,6 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           l.codleito as leito_ordem
         FROM sotech.ate_atendimento a
         INNER JOIN sotech.cdg_paciente p ON p.pkpaciente = a.fkpaciente
+        LEFT JOIN sotech.cdg_sexo s ON s.pksexo = p.fksexo
         INNER JOIN sotech.cdg_unidadesaude u ON u.pkunidadesaude = a.fkunidadesaude
         LEFT JOIN sotech.cdg_interveniente m ON m.pkinterveniente = a.fkprofissionalatendimento
         LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
