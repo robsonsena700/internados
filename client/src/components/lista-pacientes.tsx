@@ -94,13 +94,13 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
 
               {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento */}
               <div className="space-y-0">
-                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-medico-${paciente.pkatendimento}`}>
+                <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-medico-${paciente.pkatendimento}`}>
                   {paciente.medico?.nome || 'PROFISSIONAL NÃO ATRIBUÍDO'}
                 </p>
-                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-especialidade-${paciente.pkatendimento}`}>
+                <p className="text-xs font-normal uppercase leading-tight" data-testid={`text-especialidade-${paciente.pkatendimento}`}>
                   {paciente.especialidade?.descricao || 'Especialidade não definida'}
                 </p>
-                <p className="text-sm font-normal uppercase leading-tight" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
+                <p className="text-xs font-normal uppercase leading-tight" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
                   {paciente.procedimento?.descricao || 'Procedimento não definido'}
                 </p>
               </div>
