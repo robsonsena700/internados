@@ -18,15 +18,23 @@ export default function Dashboard() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     
-    // Parâmetro login: se false, redireciona assumindo usuário admin
+    // Parâmetro login: se false, faz auto-login como admin
     const loginParam = params.get('login');
     if (loginParam === 'false') {
       // Auto-login como admin sem mostrar tela de login
       fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ username: 'admin', password: '@dm1n' })
-      }).catch(console.error);
+      })
+      .then(response => {
+        if (response.ok) {
+          // Recarrega a página para aplicar a sessão
+          window.location.reload();
+        }
+      })
+      .catch(console.error);
     }
     
     // Parâmetro filtro: mostra/oculta accordion de filtros

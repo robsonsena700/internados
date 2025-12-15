@@ -27,14 +27,22 @@ export default function Login() {
   async function onSubmit(data: LoginInput) {
     setIsLoading(true);
     try {
-      const response = await apiRequest("POST", "/api/auth/login", data);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
       
       if (response.ok) {
         toast({
           title: "Login realizado com sucesso",
           description: "Bem-vindo ao sistema de acompanhamento de pacientes",
         });
-        setLocation("/");
+        // Aguarda um pouco para garantir que a sessão foi criada
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 100);
       } else {
         const error = await response.json();
         toast({
