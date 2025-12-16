@@ -72,7 +72,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               </div>
 
               {/* Coluna 2: Paciente */}
-              <div className="space-y-1">
+              <div className="space-y-0">
                 <Badge 
                   variant="default" 
                   className={`text-sm font-semibold px-4 py-1.5 whitespace-normal leading-tight ${
@@ -83,10 +83,12 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   data-testid={`text-paciente-nome-${paciente.pkatendimento}`}
                 >
                   {paciente.paciente.nome}
-                  {paciente.paciente.dataNascimento && 
-                    ` (${calcularIdade(paciente.paciente.dataNascimento)} anos)`
-                  }
                 </Badge>
+                {paciente.paciente.dataNascimento && (
+                  <p className="text-xs font-normal mt-1">
+                    ({new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")} - {calcularIdade(paciente.paciente.dataNascimento)} anos)
+                  </p>
+                )}
               </div>
 
               {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento */}
