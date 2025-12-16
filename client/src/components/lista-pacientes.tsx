@@ -72,7 +72,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               </div>
 
               {/* Coluna 2: Paciente */}
-              <div className="space-y-0">
+              <div className="space-y-1">
                 <Badge 
                   variant="default" 
                   className={`text-sm font-semibold px-4 py-1.5 whitespace-normal leading-tight ${
@@ -85,9 +85,28 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   {paciente.paciente.nome}
                 </Badge>
                 {paciente.paciente.dataNascimento && (
-                  <p className="text-xs font-normal mt-1">
-                    ({new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")} - {calcularIdade(paciente.paciente.dataNascimento)} anos)
-                  </p>
+                  <div className="flex gap-2">
+                    <Badge 
+                      variant="default" 
+                      className={`text-xs font-normal px-3 py-1 ${
+                        paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
+                          ? 'bg-blue-500 hover:bg-blue-600' 
+                          : 'bg-pink-500 hover:bg-pink-600'
+                      }`}
+                    >
+                      DN {new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")}
+                    </Badge>
+                    <Badge 
+                      variant="default" 
+                      className={`text-xs font-normal px-3 py-1 ${
+                        paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
+                          ? 'bg-blue-500 hover:bg-blue-600' 
+                          : 'bg-pink-500 hover:bg-pink-600'
+                      }`}
+                    >
+                      Idade {calcularIdade(paciente.paciente.dataNascimento)} anos
+                    </Badge>
+                  </div>
                 )}
               </div>
 
