@@ -23,7 +23,7 @@ export function DashboardHeader() {
 
   return (
     <header className="border-b bg-card">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="w-full px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
             <Activity className="h-5 w-5 text-primary-foreground" />

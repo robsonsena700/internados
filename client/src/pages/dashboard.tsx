@@ -120,7 +120,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <main className="w-full px-4 py-6 space-y-6">
         {showFiltros && <FiltrosPacientes filtros={filtros} onFiltrosChange={setFiltros} />}
         {showIndicadores && <CardsIndicadores indicadores={indicadores} isLoading={isLoadingIndicadores} />}
         <ListaPacientes pacientes={pacientesFiltrados} isLoading={isLoadingPacientes} />
