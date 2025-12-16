@@ -1,0 +1,152 @@
+CREATE TABLE sotech.tbn_procedimento (
+  pkprocedimento SERIAL,
+  codprocedimento CHAR(10) NOT NULL,
+  procedimento TEXT NOT NULL,
+  fkformaorganizacao INTEGER,
+  complexidade CHAR(1) NOT NULL,
+  sexo CHAR(1) NOT NULL,
+  quantidademax INTEGER NOT NULL,
+  diaspermanencia INTEGER NOT NULL,
+  pontos INTEGER NOT NULL,
+  idademin INTEGER NOT NULL,
+  idademax INTEGER NOT NULL,
+  valorsh NUMERIC(15,2) DEFAULT 0 NOT NULL,
+  valorsa NUMERIC(15,2) DEFAULT 0 NOT NULL,
+  valorsp NUMERIC(15,2) DEFAULT 0 NOT NULL,
+  fkfinanciamento INTEGER,
+  fkrubrica INTEGER,
+  competenciaini CHAR(6) DEFAULT '000000'::bpchar NOT NULL,
+  competenciafim CHAR(6) DEFAULT '999999'::bpchar NOT NULL,
+  tabela VARCHAR(4),
+  operacional INTEGER,
+  fkatofaturamento INTEGER,
+  fkuser INTEGER DEFAULT 0 NOT NULL,
+  version INTEGER DEFAULT 0 NOT NULL,
+  ativo BOOLEAN DEFAULT true NOT NULL,
+  uuid UUID DEFAULT uuid_generate_v4() NOT NULL,
+  CONSTRAINT sotech_tbn_procedimento_pkey PRIMARY KEY(pkprocedimento),
+  CONSTRAINT sotech_tbn_procedimento_unq_uuid UNIQUE(uuid)
+) 
+WITH (oids = false);
+
+COMMENT ON COLUMN sotech.tbn_procedimento.pkprocedimento
+IS '(pk | nn)       - Chave primária da tabela';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.codprocedimento
+IS '(idx | nn)      - Código do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.procedimento
+IS '(idx | nn)      - Descrição do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.fkformaorganizacao
+IS '(fk | idx | nn) - Referência com a tabela sotech.tbn_formaorganizacao';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.complexidade
+IS '(nn)            - Complexidade do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.sexo
+IS '(nn)            - Sexo onde pode ser utilizado o procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.quantidademax
+IS '(nn)            - Quantidade máxima permitida do procedimento por vez';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.diaspermanencia
+IS '(nn)            - Quantidade de dias de permanência do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.pontos
+IS '(nn)            - Quantidade de pontos do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.idademin
+IS '(nn)            - Idade mínima onde o procedimento pode ser realizado';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.idademax
+IS '(nn)            - Idade máxima onde o procedimento pode ser realizado';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.valorsh
+IS '(nn)            - Valor do serviço hospitalar pago pelo procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.valorsa
+IS '(nn)            - Valor do serviço ambulatorial pago pelo procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.valorsp
+IS '(nn)            - Valor do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.fkfinanciamento
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_financiamento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.fkrubrica
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_rubrica';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.competenciaini
+IS '(nn)            - Competência inicial de vigência da utilização das regras do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.competenciafim
+IS '(nn)            - Competência final de vigência da utilização das regras do procedimento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.tabela
+IS '                - NÃO UTILIZADO';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.operacional
+IS '                - NÃO UTILIZADO';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.fkatofaturamento
+IS '(fk | idx)      - Referência com a tabela sotech.tbl_atofaturamento';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.fkuser
+IS '(fk | idx | nn) - Referência com a tabela ish.sys_usuario';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.version
+IS '(nn)            - Versão do registro';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.ativo
+IS '(idx | nn)      - Flag para desabilitar visualização do registro';
+
+COMMENT ON COLUMN sotech.tbn_procedimento.uuid
+IS '(unq | nn)      - UUID do registro';
+
+CREATE INDEX sotech_tbn_procedimento_idx_ativo ON sotech.tbn_procedimento
+  USING btree (ativo);
+
+CREATE INDEX sotech_tbn_procedimento_idx_codprocedimento ON sotech.tbn_procedimento
+  USING btree (codprocedimento COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_tbn_procedimento_idx_competenciafim ON sotech.tbn_procedimento
+  USING btree (competenciafim COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_tbn_procedimento_idx_competenciaini ON sotech.tbn_procedimento
+  USING btree (competenciaini COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_tbn_procedimento_idx_fkatofaturamento ON sotech.tbn_procedimento
+  USING btree (fkatofaturamento);
+
+CREATE INDEX sotech_tbn_procedimento_idx_fkfinanciamento ON sotech.tbn_procedimento
+  USING btree (fkfinanciamento);
+
+CREATE INDEX sotech_tbn_procedimento_idx_fkformaorganizacao ON sotech.tbn_procedimento
+  USING btree (fkformaorganizacao);
+
+CREATE INDEX sotech_tbn_procedimento_idx_fkrubrica ON sotech.tbn_procedimento
+  USING btree (fkrubrica);
+
+CREATE INDEX sotech_tbn_procedimento_idx_fkuser ON sotech.tbn_procedimento
+  USING btree (fkuser);
+
+CREATE INDEX sotech_tbn_procedimento_idx_procedimento ON sotech.tbn_procedimento
+  USING btree (procedimento COLLATE pg_catalog."default");
+
+CREATE TRIGGER sotech_tbn_procedimento_auditoria
+  AFTER INSERT OR UPDATE OR DELETE 
+  ON sotech.tbn_procedimento
+  
+FOR EACH ROW 
+  EXECUTE PROCEDURE sotech.tbn_procedimento_auditoria();
+
+CREATE TRIGGER sotech_tbn_procedimento_tratamento
+  BEFORE INSERT OR UPDATE 
+  ON sotech.tbn_procedimento
+  
+FOR EACH ROW 
+  EXECUTE PROCEDURE sotech.tbn_procedimento_tratamento();
+
+ALTER TABLE sotech.tbn_procedimento
+  OWNER TO postgres;
