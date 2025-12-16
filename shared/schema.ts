@@ -186,6 +186,7 @@ export type PacienteInternado = {
   diasInternado: number;
   queixaPrincipal?: string;
   procedimentosLancados?: ProcedimentoLancado[];
+  quantidadeExamesAnatomia?: number;
 };
 
 // Modificado para usar postoId ao invés de leitoId

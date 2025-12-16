@@ -251,7 +251,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             INNER JOIN sotech.tbl_procedimento proc_lanc ON proc_lanc.pkprocedimento = lancamento.fkprocedimento
             WHERE lancamento.fkatendimento = a.pkatendimento
               AND lancamento.status = 'S'
+              AND proc_lanc.codprocedimento NOT LIKE '0202%'
           ) as "procedimentosLancados",
+          (
+            SELECT COUNT(*)::integer
+            FROM sotech.ate_atendimento_lancamento lancamento
+            INNER JOIN sotech.tbl_procedimento proc_lanc ON proc_lanc.pkprocedimento = lancamento.fkprocedimento
+            WHERE lancamento.fkatendimento = a.pkatendimento
+              AND lancamento.status = 'S'
+              AND proc_lanc.codprocedimento LIKE '0202%'
+          ) as "quantidadeExamesAnatomia",
           u.unidadesaude as unidade_ordem,
           po.posto as posto_ordem,
           en.enfermaria as enfermaria_ordem,
