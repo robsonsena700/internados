@@ -52,6 +52,33 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
     return idade;
   };
 
+  const getCorPorTempoEspera = (datahora: string) => {
+    const hoje = new Date();
+    const dataLancamento = new Date(datahora);
+    const diferencaMs = hoje.getTime() - dataLancamento.getTime();
+    const diasDecorridos = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
+
+    // Escala de 0 a 10 dias
+    if (diasDecorridos === 0) {
+      return "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800";
+    } else if (diasDecorridos === 1) {
+      return "bg-lime-50 dark:bg-lime-950 text-lime-700 dark:text-lime-300 border-lime-200 dark:border-lime-800";
+    } else if (diasDecorridos === 2) {
+      return "bg-yellow-50 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800";
+    } else if (diasDecorridos >= 3 && diasDecorridos <= 4) {
+      return "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+    } else if (diasDecorridos >= 5 && diasDecorridos <= 6) {
+      return "bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800";
+    } else if (diasDecorridos >= 7 && diasDecorridos <= 8) {
+      return "bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800";
+    } else if (diasDecorridos === 9) {
+      return "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
+    } else {
+      // 10 dias ou mais
+      return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700";
+    }
+  };
+
   return (
     <div className="space-y-3">
       {pacientes.map((paciente) => (
@@ -158,7 +185,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                     <Badge 
                       key={proc.id}
                       variant="outline" 
-                      className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                      className={`text-xs px-2 py-1 ${getCorPorTempoEspera(proc.datahora)}`}
                       data-testid={`badge-procedimento-lancado-${proc.id}`}
                     >
                       {proc.descricao}
