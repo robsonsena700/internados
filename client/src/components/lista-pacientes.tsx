@@ -140,7 +140,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                         : paciente.diasInternado > Math.ceil(paciente.procedimento.diaspermanencia / 2)
                         ? 'bg-green-500 hover:bg-green-600'
                         : 'bg-orange-500 hover:bg-orange-600'
-                      : 'bg-blue-500 hover:bg-blue-600'
+                      : 'bg-gray-500 hover:bg-gray-600'
                   }`}
                   data-testid={`text-dias-internado-${paciente.pkatendimento}`}
                 >
