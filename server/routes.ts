@@ -162,9 +162,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/procedimentos", async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT DISTINCT pr.pkprocedimento as id, pr.procedimento as descricao, pr.codprocedimento as codigo 
+        `SELECT DISTINCT 
+           pr.pkprocedimento as id, 
+           pr.procedimento as descricao, 
+           pr.codprocedimento as codigo,
+           tbn.diaspermanencia
          FROM sotech.tbl_procedimento pr
          INNER JOIN sotech.ate_atendimento a ON a.fkprocedimentosolicitado = pr.pkprocedimento
+         LEFT JOIN sotech.tbn_procedimento tbn ON tbn.codprocedimento = pr.codprocedimento AND tbn.ativo = true
          WHERE a.fktipoatendimento = 2
            AND a.datasaida IS NULL
            AND a.ativo = true
@@ -223,7 +228,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           END as especialidade,
           CASE 
             WHEN pr.pkprocedimento IS NOT NULL 
-            THEN jsonb_build_object('id', pr.pkprocedimento, 'descricao', pr.procedimento)
+            THEN jsonb_build_object(
+              'id', pr.pkprocedimento, 
+              'descricao', pr.procedimento,
+              'diaspermanencia', tbn.diaspermanencia
+            )
             ELSE NULL
           END as procedimento,
           a.dataentrada as "dataEntrada",
@@ -243,6 +252,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         LEFT JOIN sotech.cdg_posto po ON po.pkposto = en.fkposto
         LEFT JOIN sotech.tbn_especialidade e ON e.pkespecialidade = a.fkespecialidade
         LEFT JOIN sotech.tbl_procedimento pr ON pr.pkprocedimento = a.fkprocedimentosolicitado
+        LEFT JOIN sotech.tbn_procedimento tbn ON tbn.codprocedimento = pr.codprocedimento AND tbn.ativo = true
         WHERE a.fktipoatendimento = 2
           AND a.datasaida IS NULL
           AND a.ativo = true

@@ -44,11 +44,40 @@ export const especialidades = pgTable("tbn_especialidade", {
   descricao: text("descricao"),
 }, { schema: "sotech" });
 
-// Tabela de procedimentos
+// Tabela de procedimentos (tbl_procedimento - legado)
 export const procedimentos = pgTable("tbl_procedimento", {
   pkprocedimento: serial("pkprocedimento").primaryKey(),
   descricao: text("descricao"),
   codigo: text("codigo"),
+}, { schema: "sotech" });
+
+// Tabela de procedimentos (tbn_procedimento - tabela SUS)
+export const procedimentosSus = pgTable("tbn_procedimento", {
+  pkprocedimento: serial("pkprocedimento").primaryKey(),
+  codprocedimento: char("codprocedimento", { length: 10 }).notNull(),
+  procedimento: text("procedimento").notNull(),
+  fkformaorganizacao: integer("fkformaorganizacao"),
+  complexidade: char("complexidade", { length: 1 }).notNull(),
+  sexo: char("sexo", { length: 1 }).notNull(),
+  quantidademax: integer("quantidademax").notNull(),
+  diaspermanencia: integer("diaspermanencia").notNull(),
+  pontos: integer("pontos").notNull(),
+  idademin: integer("idademin").notNull(),
+  idademax: integer("idademax").notNull(),
+  valorsh: numeric("valorsh", { precision: 15, scale: 2 }).default(sql`0`).notNull(),
+  valorsa: numeric("valorsa", { precision: 15, scale: 2 }).default(sql`0`).notNull(),
+  valorsp: numeric("valorsp", { precision: 15, scale: 2 }).default(sql`0`).notNull(),
+  fkfinanciamento: integer("fkfinanciamento"),
+  fkrubrica: integer("fkrubrica"),
+  competenciaini: char("competenciaini", { length: 6 }).default(sql`'000000'`).notNull(),
+  competenciafim: char("competenciafim", { length: 6 }).default(sql`'999999'`).notNull(),
+  tabela: varchar("tabela", { length: 4 }),
+  operacional: integer("operacional"),
+  fkatofaturamento: integer("fkatofaturamento"),
+  fkuser: integer("fkuser").default(0).notNull(),
+  version: integer("version").default(0).notNull(),
+  ativo: boolean("ativo").default(true).notNull(),
+  uuid: uuid("uuid").default(sql`uuid_generate_v4()`).notNull(),
 }, { schema: "sotech" });
 
 // Tabela principal de atendimentos
@@ -118,6 +147,7 @@ export type Procedimento = {
   id: number;
   descricao: string;
   codigo?: string;
+  diaspermanencia?: number;
 };
 
 export type PacienteInternado = {

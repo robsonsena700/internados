@@ -118,6 +118,11 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 </p>
                 <p className="text-xs font-normal uppercase leading-tight" data-testid={`text-procedimento-${paciente.pkatendimento}`}>
                   {paciente.procedimento?.descricao || 'Procedimento não definido'}
+                  {paciente.procedimento?.diaspermanencia && (
+                    <span className="ml-2 text-xs font-semibold text-muted-foreground">
+                      ({paciente.procedimento.diaspermanencia} dias)
+                    </span>
+                  )}
                 </p>
               </div>
 
