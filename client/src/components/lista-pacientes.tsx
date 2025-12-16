@@ -133,7 +133,15 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 </p>
                 <Badge 
                   variant="default" 
-                  className="bg-blue-500 hover:bg-blue-600 text-sm px-3 py-1" 
+                  className={`text-sm px-3 py-1 ${
+                    paciente.procedimento?.diaspermanencia
+                      ? paciente.diasInternado > paciente.procedimento.diaspermanencia * 2
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : paciente.diasInternado > Math.ceil(paciente.procedimento.diaspermanencia / 2)
+                        ? 'bg-green-500 hover:bg-green-600'
+                        : 'bg-orange-500 hover:bg-orange-600'
+                      : 'bg-blue-500 hover:bg-blue-600'
+                  }`}
                   data-testid={`text-dias-internado-${paciente.pkatendimento}`}
                 >
                   {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
