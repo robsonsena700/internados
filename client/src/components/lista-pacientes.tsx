@@ -167,7 +167,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                       )}
                     </Badge>
                   ))}
-                  {paciente.quantidadeExamesAnatomia && paciente.quantidadeExamesAnatomia > 0 && (
+                  {paciente.quantidadeExamesAnatomia !== undefined && paciente.quantidadeExamesAnatomia > 0 && (
                     <Badge 
                       variant="outline" 
                       className="text-xs px-2 py-1 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
