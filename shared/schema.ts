@@ -150,6 +150,13 @@ export type Procedimento = {
   diaspermanencia?: number;
 };
 
+export type ProcedimentoLancado = {
+  id: number;
+  descricao: string;
+  quantidade: number;
+  datahora: string;
+};
+
 export type PacienteInternado = {
   pkatendimento: number;
   paciente: {
@@ -178,6 +185,7 @@ export type PacienteInternado = {
   dataEntrada: string;
   diasInternado: number;
   queixaPrincipal?: string;
+  procedimentosLancados?: ProcedimentoLancado[];
 };
 
 // Modificado para usar postoId ao invés de leitoId

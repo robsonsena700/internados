@@ -148,6 +148,28 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 </Badge>
               </div>
             </div>
+
+            {/* Linha de procedimentos lançados */}
+            {paciente.procedimentosLancados && paciente.procedimentosLancados.length > 0 && (
+              <div className="mt-3 pt-3 border-t">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Procedimentos Lançados:</p>
+                <div className="flex flex-wrap gap-2">
+                  {paciente.procedimentosLancados.map((proc) => (
+                    <Badge 
+                      key={proc.id}
+                      variant="outline" 
+                      className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                      data-testid={`badge-procedimento-lancado-${proc.id}`}
+                    >
+                      {proc.descricao}
+                      {proc.quantidade > 1 && (
+                        <span className="ml-1 font-semibold">x{proc.quantidade}</span>
+                      )}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

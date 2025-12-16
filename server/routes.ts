@@ -238,6 +238,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           a.dataentrada as "dataEntrada",
           EXTRACT(DAY FROM (NOW() - a.dataentrada))::integer as "diasInternado",
           a.queixaprincipal as "queixaPrincipal",
+          (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', lancamento.pkatendimentolancamento,
+                'descricao', proc_lanc.procedimento,
+                'quantidade', lancamento.quantidade,
+                'datahora', lancamento.datahora
+              ) ORDER BY lancamento.datahora DESC
+            )
+            FROM sotech.ate_atendimento_lancamento lancamento
+            INNER JOIN sotech.tbl_procedimento proc_lanc ON proc_lanc.pkprocedimento = lancamento.fkprocedimento
+            WHERE lancamento.fkatendimento = a.pkatendimento
+              AND lancamento.ativo = true
+              AND lancamento.status = 'S'
+          ) as "procedimentosLancados",
           u.unidadesaude as unidade_ordem,
           po.posto as posto_ordem,
           en.enfermaria as enfermaria_ordem,
