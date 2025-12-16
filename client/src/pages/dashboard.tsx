@@ -30,11 +30,16 @@ export default function Dashboard() {
       })
       .then(response => {
         if (response.ok) {
-          // Recarrega a página para aplicar a sessão
-          window.location.reload();
+          // Remove o parâmetro login=false da URL para evitar loop
+          params.delete('login');
+          const newUrl = params.toString() 
+            ? `${window.location.pathname}?${params.toString()}`
+            : window.location.pathname;
+          window.history.replaceState({}, '', newUrl);
         }
       })
       .catch(console.error);
+      return; // Sai do useEffect para não processar outros parâmetros ainda
     }
     
     // Parâmetro filtro: mostra/oculta accordion de filtros
