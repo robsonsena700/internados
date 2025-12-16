@@ -28,14 +28,19 @@ export default function Dashboard() {
         credentials: 'include',
         body: JSON.stringify({ username: 'admin', password: '@dm1n' })
       })
-      .then(response => {
+      .then(async response => {
         if (response.ok) {
-          // Remove o parâmetro login=false da URL para evitar loop
+          // Remove o parâmetro login=false da URL
           params.delete('login');
           const newUrl = params.toString() 
             ? `${window.location.pathname}?${params.toString()}`
             : window.location.pathname;
-          window.history.replaceState({}, '', newUrl);
+          
+          // Aguarda um pouco para garantir que a sessão foi estabelecida
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Recarrega a página para aplicar os outros parâmetros da URL
+          window.location.href = newUrl;
         }
       })
       .catch(console.error);
