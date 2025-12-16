@@ -57,9 +57,9 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
       {pacientes.map((paciente) => (
         <Card key={paciente.pkatendimento} data-testid={`card-paciente-${paciente.pkatendimento}`}>
           <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
-              {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) */}
-              <div className="space-y-0">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+              {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) - 2 colunas */}
+              <div className="space-y-0 md:col-span-2">
                 <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
                   {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
                 </p>
@@ -71,8 +71,8 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 </p>
               </div>
 
-              {/* Coluna 2: Paciente */}
-              <div className="space-y-1">
+              {/* Coluna 2: Paciente - 4 colunas */}
+              <div className="space-y-1 md:col-span-4">
                 <Badge 
                   variant="default" 
                   className={`text-sm font-semibold px-4 py-1.5 whitespace-normal leading-tight ${
@@ -108,8 +108,8 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 )}
               </div>
 
-              {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento */}
-              <div className="space-y-0">
+              {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento - 4 colunas */}
+              <div className="space-y-0 md:col-span-4">
                 <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-medico-${paciente.pkatendimento}`}>
                   {paciente.medico?.nome || 'PROFISSIONAL NÃO ATRIBUÍDO'}
                 </p>
@@ -121,8 +121,8 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                 </p>
               </div>
 
-              {/* Coluna 4: Data e Tempo de Internação */}
-              <div className="space-y-1 text-right md:text-left">
+              {/* Coluna 4: Data e Tempo de Internação - 2 colunas */}
+              <div className="space-y-1 text-right md:text-left md:col-span-2">
                 <p className="text-xs font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
                   Desde de {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
                 </p>
