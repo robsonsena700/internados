@@ -85,27 +85,25 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   {paciente.paciente.nome}
                 </Badge>
                 {paciente.paciente.dataNascimento && (
-                  <div className="flex gap-2">
-                    <Badge 
-                      variant="default" 
-                      className={`text-xs font-normal px-3 py-1 ${
+                  <div className="flex gap-2 flex-wrap">
+                    <span 
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-normal ${
                         paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
-                          ? 'bg-blue-500 hover:bg-blue-600' 
-                          : 'bg-pink-500 hover:bg-pink-600'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                          : 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
                       }`}
                     >
                       DN {new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")}
-                    </Badge>
-                    <Badge 
-                      variant="default" 
-                      className={`text-xs font-normal px-3 py-1 ${
+                    </span>
+                    <span 
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-normal ${
                         paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
-                          ? 'bg-blue-500 hover:bg-blue-600' 
-                          : 'bg-pink-500 hover:bg-pink-600'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                          : 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
                       }`}
                     >
                       Idade {calcularIdade(paciente.paciente.dataNascimento)} anos
-                    </Badge>
+                    </span>
                   </div>
                 )}
               </div>
