@@ -1,0 +1,270 @@
+CREATE TABLE sotech.ate_atendimento_lancamento (
+  pkatendimentolancamento SERIAL,
+  fkatendimento INTEGER NOT NULL,
+  fkuser INTEGER DEFAULT 0 NOT NULL,
+  fktipotabela INTEGER NOT NULL,
+  fkprocedimento INTEGER NOT NULL,
+  fkprofissional INTEGER,
+  fkcbo INTEGER,
+  fkcid INTEGER,
+  datahora TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT now() NOT NULL,
+  quantidade NUMERIC(15,4) DEFAULT 1 NOT NULL,
+  autorizacao TEXT,
+  status CHAR(1) DEFAULT 'S'::bpchar NOT NULL,
+  automatico BOOLEAN DEFAULT false NOT NULL,
+  cnpj TEXT,
+  fkservico INTEGER,
+  fkclassificacao INTEGER,
+  fktipoato INTEGER,
+  datainicial TIMESTAMP(0) WITHOUT TIME ZONE,
+  datafinal TIMESTAMP(0) WITHOUT TIME ZONE,
+  quantidadesolicitada NUMERIC(15,4) DEFAULT 1 NOT NULL,
+  valorunitario NUMERIC(15,4) DEFAULT 0 NOT NULL,
+  indice NUMERIC(15,2) DEFAULT 100 NOT NULL,
+  valortotal NUMERIC(15,4) DEFAULT 0 NOT NULL,
+  faturado BOOLEAN DEFAULT false NOT NULL,
+  erros TEXT,
+  fktiporepasse INTEGER,
+  fkvia INTEGER,
+  fktecnica INTEGER,
+  fkunidade INTEGER,
+  idade INTEGER,
+  consultorio BOOLEAN DEFAULT false NOT NULL,
+  registro TEXT,
+  fkatendimentoguia INTEGER,
+  version INTEGER DEFAULT 0 NOT NULL,
+  urgente BOOLEAN DEFAULT false NOT NULL,
+  credito CHAR(1),
+  observacao TEXT,
+  uuid UUID DEFAULT uuid_generate_v4() NOT NULL,
+  ativo BOOLEAN DEFAULT true NOT NULL,
+  justificativa TEXT,
+  fkprofissionalsolicitante INTEGER,
+  assinado BOOLEAN DEFAULT false NOT NULL,
+  fkprofissionalsolicitanteexterno INTEGER,
+  CONSTRAINT sotech_ate_atendimento_lancamento_pkey PRIMARY KEY(pkatendimentolancamento)
+) 
+WITH (oids = true);
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.pkatendimentolancamento
+IS '(pk | nn)       - Chave primária da tabela';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkatendimento
+IS '(fk | idx | nn) - Referência com a tabela sotech.ate_atendimento';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkuser
+IS '(fk | idx | nn) - Referência com a tabela ish.sys_usuario';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fktipotabela
+IS '(fk | idx | nn) - Referência com a tabela sotech.cnv_tipotabela';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkprocedimento
+IS '(fk | idx | nn) - Referência com a tabela sotech.tbl_procedimento';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkprofissional
+IS '(fk | idx)      - Referência com a tabela sotech.cdg_interveniente';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkcbo
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_cbo';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkcid
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_cid';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.datahora
+IS '(idx | nn)      - Data hora';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.quantidade
+IS '(nn)            - Quantidade';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.autorizacao
+IS '()              - Autorização';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.status
+IS '(nn)            - Status';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.automatico
+IS '(nn)            - Automático';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.cnpj
+IS '()              - CNPJ';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkservico
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_servico';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkclassificacao
+IS '(fk | idx)      - Referência com a tabela sotech.tbn_classificacao';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fktipoato
+IS '(fk | idx)      - Referência com a tabela sotech.tbl_atofaturamento';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.datainicial
+IS '()              - Data inicial';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.datafinal
+IS '()              - Data final';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.quantidadesolicitada
+IS '(nn)            - Quantidade solicitada';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.valorunitario
+IS '(nn)            - Valor unitário';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.indice
+IS '(nn)            - Indice';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.valortotal
+IS '(nn)            - Valor total';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.faturado
+IS '(nn)            - Faturado';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.erros
+IS '()              - Sem uso';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fktiporepasse
+IS '(fk | idx)      - Referência com a tabela sotech.cnv_tiporepasse';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkvia
+IS '(fk | idx)      - Referência com a tabela sotech.tis_tabela';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fktecnica
+IS '(fk | idx)      - Referência com a tabela sotech.tis_tabela';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkunidade
+IS '(fk | idx)      - Referência com a tabela sotech.tis_tabela';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.idade
+IS '()              - Idade';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.consultorio
+IS '(nn)            - Consultório';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.registro
+IS '()              - Registro';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkatendimentoguia
+IS '(fk | idx)      - Referência com a tabela sotech.ate_atendimento_guia';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.version
+IS '(nn)            - Versionamento do registro';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.urgente
+IS '(nn)            - Urgente';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.credito
+IS 'AIH
+''P'' - Profissional
+''U'' - Unidade de saúde';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.observacao
+IS '()              - Observação';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.uuid
+IS '(unq | nn)      - UUID do registro';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.ativo
+IS '(idx | nn)      - Flag para desabilitar visualização do registro';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.justificativa
+IS '()              - Justificativa';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkprofissionalsolicitante
+IS '(fk | idx)      - Referência com a tabela sotech.cdg_interveniente (Profissional solicitante)';
+
+COMMENT ON COLUMN sotech.ate_atendimento_lancamento.fkprofissionalsolicitanteexterno
+IS '(fk | idx)      - Relacionamento com a tabela sotech.cdg_interveniente_externo';
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_active ON sotech.ate_atendimento_lancamento
+  USING btree (ativo);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_automatico ON sotech.ate_atendimento_lancamento
+  USING btree (automatico);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_consultorio ON sotech.ate_atendimento_lancamento
+  USING btree (consultorio);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_datahora ON sotech.ate_atendimento_lancamento
+  USING btree (datahora);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_erros ON sotech.ate_atendimento_lancamento
+  USING btree (erros COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_faturado ON sotech.ate_atendimento_lancamento
+  USING btree (faturado);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkatendimento ON sotech.ate_atendimento_lancamento
+  USING btree (fkatendimento);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkatendimentoguia ON sotech.ate_atendimento_lancamento
+  USING btree (fkatendimentoguia);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkcbo ON sotech.ate_atendimento_lancamento
+  USING btree (fkcbo);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkcid ON sotech.ate_atendimento_lancamento
+  USING btree (fkcid);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkclassificacao ON sotech.ate_atendimento_lancamento
+  USING btree (fkclassificacao);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkprocedimento ON sotech.ate_atendimento_lancamento
+  USING btree (fkprocedimento);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkprofissional ON sotech.ate_atendimento_lancamento
+  USING btree (fkprofissional);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkprofissionalsolicitante ON sotech.ate_atendimento_lancamento
+  USING btree (fkprofissionalsolicitante);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkservico ON sotech.ate_atendimento_lancamento
+  USING btree (fkservico);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fktecnica ON sotech.ate_atendimento_lancamento
+  USING btree (fktecnica);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fktipoato ON sotech.ate_atendimento_lancamento
+  USING btree (fktipoato);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fktiporepasse ON sotech.ate_atendimento_lancamento
+  USING btree (fktiporepasse);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fktipotabela ON sotech.ate_atendimento_lancamento
+  USING btree (fktipotabela);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkunidade ON sotech.ate_atendimento_lancamento
+  USING btree (fkunidade);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkuser ON sotech.ate_atendimento_lancamento
+  USING btree (fkuser);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_fkvia ON sotech.ate_atendimento_lancamento
+  USING btree (fkvia);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_registro ON sotech.ate_atendimento_lancamento
+  USING btree (registro COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_status ON sotech.ate_atendimento_lancamento
+  USING btree (status COLLATE pg_catalog."default");
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_uuid ON sotech.ate_atendimento_lancamento
+  USING btree (uuid);
+
+CREATE INDEX sotech_ate_atendimento_lancamento_idx_version ON sotech.ate_atendimento_lancamento
+  USING btree (version);
+
+CREATE TRIGGER ate_atendimento_lancamento_auditoria
+  AFTER INSERT OR UPDATE OR DELETE 
+  ON sotech.ate_atendimento_lancamento
+  
+FOR EACH ROW 
+  EXECUTE PROCEDURE sotech.ate_atendimento_lancamento_auditoria();
+
+CREATE TRIGGER ate_atendimento_lancamento_tratamento
+  BEFORE INSERT OR UPDATE 
+  ON sotech.ate_atendimento_lancamento
+  
+FOR EACH ROW 
+  EXECUTE PROCEDURE sotech.ate_atendimento_lancamento_tratamento();
+
+ALTER TABLE sotech.ate_atendimento_lancamento
+  OWNER TO sotech;
