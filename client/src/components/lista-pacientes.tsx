@@ -181,7 +181,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               <div className="mt-3 pt-3 border-t">
                 <p className="text-xs font-semibold text-muted-foreground mb-2">Pendências:</p>
                 <div className="flex flex-wrap gap-2">
-                  {paciente.procedimentosLancados && paciente.procedimentosLancados.map((proc) => (
+                  {paciente.procedimentosLancados && paciente.procedimentosLancados.length > 0 && paciente.procedimentosLancados.map((proc) => (
                     <Badge 
                       key={proc.id}
                       variant="outline" 
@@ -194,7 +194,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                       )}
                     </Badge>
                   ))}
-                  {paciente.quantidadeExamesAnatomia !== undefined && paciente.quantidadeExamesAnatomia > 0 && (
+                  {paciente.quantidadeExamesAnatomia && paciente.quantidadeExamesAnatomia > 0 && (
                     <Badge 
                       variant="outline" 
                       className="text-xs px-2 py-1 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
