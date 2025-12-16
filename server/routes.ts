@@ -250,7 +250,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             FROM sotech.ate_atendimento_lancamento lancamento
             INNER JOIN sotech.tbl_procedimento proc_lanc ON proc_lanc.pkprocedimento = lancamento.fkprocedimento
             WHERE lancamento.fkatendimento = a.pkatendimento
-              AND lancamento.ativo = true
               AND lancamento.status = 'S'
           ) as "procedimentosLancados",
           u.unidadesaude as unidade_ordem,
