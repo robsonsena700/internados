@@ -30,17 +30,20 @@ export default function Dashboard() {
       })
       .then(async response => {
         if (response.ok) {
-          // Remove o parâmetro login=false da URL
+          // Aguarda um pouco para garantir que a sessão foi estabelecida
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Remove apenas o parâmetro login=false, mantendo todos os outros
           params.delete('login');
           const newUrl = params.toString() 
             ? `${window.location.pathname}?${params.toString()}`
             : window.location.pathname;
           
-          // Aguarda um pouco para garantir que a sessão foi estabelecida
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Atualiza a URL sem recarregar a página
+          window.history.replaceState({}, '', newUrl);
           
-          // Recarrega a página para aplicar os outros parâmetros da URL
-          window.location.href = newUrl;
+          // Força a atualização do componente para processar os outros parâmetros
+          window.location.reload();
         }
       })
       .catch(console.error);
