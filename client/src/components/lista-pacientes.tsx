@@ -193,7 +193,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                     <Badge 
                       key={proc.id}
                       variant="outline" 
-                      className="text-xs px-2 py-1"
+                      className={`text-xs px-2 py-1 ${proc.dataLancamento ? getCorPorTempoEspera(proc.dataLancamento) : ''}`}
                       data-testid={`badge-procedimento-lancado-${proc.id}`}
                     >
                       {proc.descricao}
