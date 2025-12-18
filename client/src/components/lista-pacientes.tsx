@@ -120,20 +120,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
 
               {/* Conteúdo Principal */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4">
-                {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) - 2 colunas */}
-                <div className="space-y-0 md:col-span-2">
-                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
-                    {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
-                  </p>
-                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
-                    {paciente.leito?.enfermaria?.descricao || 'ENFERMARIA NÃO DEFINIDA'}
-                  </p>
-                  <p className="text-xs font-bold leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
-                    {paciente.leito?.descricao ? `Leito ${paciente.leito.descricao}` : 'Leito não definido'}
-                  </p>
-                </div>
-
-                {/* Coluna 2: Paciente - 4 colunas */}
+                {/* Coluna 1: Paciente - 4 colunas */}
                 <div className="space-y-1 md:col-span-4">
                   <p className="text-base font-bold" data-testid={`text-paciente-nome-${paciente.pkatendimento}`}>
                     {paciente.paciente.nome}
@@ -149,6 +136,19 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                       </span>
                     </div>
                   )}
+                </div>
+
+                {/* Coluna 2: P.E.L (Posto.Enfermaria.Leito) - 2 colunas */}
+                <div className="space-y-0 md:col-span-2">
+                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
+                    {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
+                  </p>
+                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
+                    {paciente.leito?.enfermaria?.descricao || 'ENFERMARIA NÃO DEFINIDA'}
+                  </p>
+                  <p className="text-xs font-bold leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
+                    {paciente.leito?.descricao ? `Leito ${paciente.leito.descricao}` : 'Leito não definido'}
+                  </p>
                 </div>
 
               {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento - 4 colunas */}
