@@ -103,6 +103,7 @@ export type Paciente = {
   cpf?: string;
   dataNascimento?: string;
   sexo?: string;
+  foto?: string;
 };
 
 export type Medico = {

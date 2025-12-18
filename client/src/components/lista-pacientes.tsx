@@ -52,6 +52,29 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
     return idade;
   };
 
+  const getFotoPaciente = (paciente: { foto?: string; sexo?: string; dataNascimento?: string }) => {
+    // Se tem foto cadastrada, retorna a foto
+    if (paciente.foto) {
+      return `data:image/jpeg;base64,${paciente.foto}`;
+    }
+
+    // Calcula idade para determinar se é criança ou adulto
+    const idade = paciente.dataNascimento ? calcularIdade(paciente.dataNascimento) : 18;
+    const isCrianca = idade <= 14;
+    const isFeminino = paciente.sexo?.toUpperCase() === 'FEMININO' || paciente.sexo?.toUpperCase() === 'F';
+
+    // Retorna avatar padrão baseado em sexo e idade
+    if (isFeminino && !isCrianca) {
+      return '/avatar-feminino-adulto.svg';
+    } else if (isFeminino && isCrianca) {
+      return '/avatar-feminino-crianca.svg';
+    } else if (!isFeminino && !isCrianca) {
+      return '/avatar-masculino-adulto.svg';
+    } else {
+      return '/avatar-masculino-crianca.svg';
+    }
+  };
+
   const getCorPorTempoEspera = (datahora: string) => {
     const hoje = new Date();
     const dataLancamento = new Date(datahora);
@@ -84,56 +107,49 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
       {pacientes.map((paciente) => (
         <Card key={paciente.pkatendimento} data-testid={`card-paciente-${paciente.pkatendimento}`}>
           <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-              {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) - 2 colunas */}
-              <div className="space-y-0 md:col-span-2">
-                <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
-                  {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
-                </p>
-                <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
-                  {paciente.leito?.enfermaria?.descricao || 'ENFERMARIA NÃO DEFINIDA'}
-                </p>
-                <p className="text-xs font-bold leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
-                  {paciente.leito?.descricao ? `Leito ${paciente.leito.descricao}` : 'Leito não definido'}
-                </p>
+            <div className="flex gap-4 items-start">
+              {/* Foto do Paciente - Ocupa altura das duas linhas */}
+              <div className="flex-shrink-0">
+                <img 
+                  src={getFotoPaciente(paciente.paciente)} 
+                  alt={paciente.paciente.nome}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                  data-testid={`img-paciente-${paciente.pkatendimento}`}
+                />
               </div>
 
-              {/* Coluna 2: Paciente - 4 colunas */}
-              <div className="space-y-1 md:col-span-4">
-                <Badge 
-                  variant="default" 
-                  className={`text-sm font-semibold px-4 py-1.5 whitespace-normal leading-tight ${
-                    paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
-                      ? 'bg-blue-500 hover:bg-blue-600' 
-                      : 'bg-pink-500 hover:bg-pink-600'
-                  }`}
-                  data-testid={`text-paciente-nome-${paciente.pkatendimento}`}
-                >
-                  {paciente.paciente.nome}
-                </Badge>
-                {paciente.paciente.dataNascimento && (
-                  <div className="flex gap-2 flex-wrap">
-                    <span 
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-normal ${
-                        paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                          : 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
-                      }`}
-                    >
-                      DN {new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")}
-                    </span>
-                    <span 
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-normal ${
-                        paciente.paciente.sexo?.toUpperCase() === 'MASCULINO' 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                          : 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
-                      }`}
-                    >
-                      Idade {calcularIdade(paciente.paciente.dataNascimento)} anos
-                    </span>
-                  </div>
-                )}
-              </div>
+              {/* Conteúdo Principal */}
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Coluna 1: P.E.L (Posto.Enfermaria.Leito) - 2 colunas */}
+                <div className="space-y-0 md:col-span-2">
+                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-posto-${paciente.pkatendimento}`}>
+                    {paciente.leito?.posto?.descricao || 'POSTO NÃO DEFINIDO'}
+                  </p>
+                  <p className="text-xs font-bold uppercase leading-tight" data-testid={`text-enfermaria-${paciente.pkatendimento}`}>
+                    {paciente.leito?.enfermaria?.descricao || 'ENFERMARIA NÃO DEFINIDA'}
+                  </p>
+                  <p className="text-xs font-bold leading-tight" data-testid={`text-leito-${paciente.pkatendimento}`}>
+                    {paciente.leito?.descricao ? `Leito ${paciente.leito.descricao}` : 'Leito não definido'}
+                  </p>
+                </div>
+
+                {/* Coluna 2: Paciente - 4 colunas */}
+                <div className="space-y-1 md:col-span-4">
+                  <p className="text-base font-bold" data-testid={`text-paciente-nome-${paciente.pkatendimento}`}>
+                    {paciente.paciente.nome}
+                  </p>
+                  {paciente.paciente.dataNascimento && (
+                    <div className="flex gap-2 flex-wrap text-xs text-muted-foreground">
+                      <span>
+                        DN {new Date(paciente.paciente.dataNascimento).toLocaleDateString("pt-BR")}
+                      </span>
+                      <span>•</span>
+                      <span>
+                        Idade {calcularIdade(paciente.paciente.dataNascimento)} anos
+                      </span>
+                    </div>
+                  )}
+                </div>
 
               {/* Coluna 3: Profissional Solicitante, Especialidade e Procedimento - 4 colunas */}
               <div className="space-y-0 md:col-span-4">
@@ -154,25 +170,14 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               </div>
 
               {/* Coluna 4: Data e Tempo de Internação - 2 colunas */}
-              <div className="space-y-1 text-right md:text-left md:col-span-2">
-                <p className="text-xs font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
-                  Desde de {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
-                </p>
-                <Badge 
-                  variant="default" 
-                  className={`text-sm px-3 py-1 ${
-                    paciente.procedimento?.diaspermanencia
-                      ? paciente.diasInternado > paciente.procedimento.diaspermanencia * 2
-                        ? 'bg-red-500 hover:bg-red-600'
-                        : paciente.diasInternado > Math.ceil(paciente.procedimento.diaspermanencia / 2)
-                        ? 'bg-green-500 hover:bg-green-600'
-                        : 'bg-orange-500 hover:bg-orange-600'
-                      : 'bg-gray-500 hover:bg-gray-600'
-                  }`}
-                  data-testid={`text-dias-internado-${paciente.pkatendimento}`}
-                >
-                  {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
-                </Badge>
+                <div className="space-y-1 text-right md:text-left md:col-span-2">
+                  <p className="text-xs font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
+                    Desde de {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
+                  </p>
+                  <p className="text-sm font-bold" data-testid={`text-dias-internado-${paciente.pkatendimento}`}>
+                    {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -181,14 +186,14 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
               (paciente.procedimentosLancados && paciente.procedimentosLancados.length > 0) || 
               (paciente.quantidadeExamesAnatomia !== undefined && paciente.quantidadeExamesAnatomia !== null && paciente.quantidadeExamesAnatomia > 0)
             ) && (
-              <div className="mt-3 pt-3 border-t">
+              <div className="mt-3 pt-3 border-t ml-24">
                 <p className="text-xs font-semibold text-muted-foreground mb-2">Pendências:</p>
                 <div className="flex flex-wrap gap-2">
                   {paciente.procedimentosLancados && paciente.procedimentosLancados.length > 0 && paciente.procedimentosLancados.map((proc) => (
                     <Badge 
                       key={proc.id}
                       variant="outline" 
-                      className={`text-xs px-2 py-1 ${getCorPorTempoEspera(proc.datahora)}`}
+                      className="text-xs px-2 py-1"
                       data-testid={`badge-procedimento-lancado-${proc.id}`}
                     >
                       {proc.descricao}
@@ -200,7 +205,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   {paciente.quantidadeExamesAnatomia !== undefined && paciente.quantidadeExamesAnatomia !== null && paciente.quantidadeExamesAnatomia > 0 && (
                     <Badge 
                       variant="outline" 
-                      className="text-xs px-2 py-1 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                      className="text-xs px-2 py-1"
                       data-testid={`badge-exames-anatomia-${paciente.pkatendimento}`}
                     >
                       {paciente.quantidadeExamesAnatomia} Exames de anatomia patológica

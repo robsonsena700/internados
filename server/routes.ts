@@ -202,7 +202,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'id', p.pkpaciente, 
             'nome', p.paciente,
             'dataNascimento', p.datanascimento,
-            'sexo', s.sexo
+            'sexo', s.sexo,
+            'foto', p.foto
           ) as paciente,
           CASE 
             WHEN m.pkinterveniente IS NOT NULL 
