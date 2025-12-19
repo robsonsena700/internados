@@ -17,7 +17,8 @@ export const pacientes = pgTable("cdg_paciente", {
 // Tabela de profissionais/médicos
 export const intervenientes = pgTable("cdg_interveniente", {
   pkinterveniente: serial("pkinterveniente").primaryKey(),
-  nome: text("nome"),
+  interveniente: text("interveniente"),
+  apelido: text("apelido"),
   registro: text("registro"),
 }, { schema: "sotech" });
 
