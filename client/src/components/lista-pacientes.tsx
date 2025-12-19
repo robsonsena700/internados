@@ -192,7 +192,13 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   </p>
                   <Badge 
                     variant="outline" 
-                    className={`text-sm px-2 py-1 ${paciente.procedimento?.diaspermanencia ? getCorPorTempoEspera(new Date(new Date(paciente.dataEntrada).getTime() + paciente.procedimento.diaspermanencia * 24 * 60 * 60 * 1000).toISOString()) : ''}`}
+                    className={`text-sm px-2 py-1 ${
+                      paciente.procedimento?.diaspermanencia 
+                        ? paciente.diasInternado > paciente.procedimento.diaspermanencia
+                          ? "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-200 border-red-300 dark:border-red-800"
+                          : "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-200 border-green-300 dark:border-green-800"
+                        : ''
+                    }`}
                     data-testid={`badge-dias-internado-${paciente.pkatendimento}`}
                   >
                     {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
