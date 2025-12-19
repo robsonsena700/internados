@@ -207,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ) as paciente,
           CASE 
             WHEN m.pkinterveniente IS NOT NULL 
-            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.apelido)
+            THEN jsonb_build_object('id', m.pkinterveniente, 'nome', m.interveniente)
             ELSE NULL
           END as medico,
           jsonb_build_object('id', u.pkunidadesaude, 'descricao', u.unidadesaude) as unidadeSaude,
@@ -268,7 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         INNER JOIN sotech.cdg_paciente p ON p.pkpaciente = a.fkpaciente
         LEFT JOIN sotech.tbl_sexo s ON s.pksexo = p.fksexo
         INNER JOIN sotech.cdg_unidadesaude u ON u.pkunidadesaude = a.fkunidadesaude
-        LEFT JOIN sotech.cdg_interveniente m ON m.pkinterveniente = a.fkprofissionalatendimento
+        LEFT JOIN sotech.cdg_interveniente m ON m.pkinterveniente = a.fkprofissionalsolicitante
         LEFT JOIN sotech.cdg_leito l ON l.pkleito = a.fkleito
         LEFT JOIN sotech.cdg_enfermaria en ON en.pkenfermaria = l.fkenfermaria
         LEFT JOIN sotech.cdg_posto po ON po.pkposto = en.fkposto
