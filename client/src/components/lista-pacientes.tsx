@@ -192,11 +192,20 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   </p>
                   <Badge 
                     variant="outline" 
-                    className={`text-sm px-2 py-1 ${
+                    className={`text-sm px-2 py-1 font-bold ${
                       paciente.procedimento?.diaspermanencia 
-                        ? paciente.diasInternado > paciente.procedimento.diaspermanencia
-                          ? "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-200 border-red-300 dark:border-red-800"
-                          : "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-200 border-green-300 dark:border-green-800"
+                        ? (() => {
+                            const metade = paciente.procedimento.diaspermanencia / 2;
+                            const dobro = paciente.procedimento.diaspermanencia * 2;
+                            
+                            if (paciente.diasInternado < metade) {
+                              return "bg-orange-500 text-white border-orange-600";
+                            } else if (paciente.diasInternado > dobro) {
+                              return "bg-red-600 text-white border-red-700";
+                            } else {
+                              return "bg-green-600 text-white border-green-700";
+                            }
+                          })()
                         : ''
                     }`}
                     data-testid={`badge-dias-internado-${paciente.pkatendimento}`}
