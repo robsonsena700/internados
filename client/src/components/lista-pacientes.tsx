@@ -190,9 +190,13 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   <p className="text-xs font-normal" data-testid={`text-data-entrada-${paciente.pkatendimento}`}>
                     Desde de {new Date(paciente.dataEntrada).toLocaleDateString("pt-BR")}
                   </p>
-                  <p className="text-sm font-bold" data-testid={`text-dias-internado-${paciente.pkatendimento}`}>
+                  <Badge 
+                    variant="outline" 
+                    className={`text-sm px-2 py-1 ${paciente.procedimento?.diaspermanencia ? getCorPorTempoEspera(new Date(new Date(paciente.dataEntrada).getTime() + paciente.procedimento.diaspermanencia * 24 * 60 * 60 * 1000).toISOString()) : ''}`}
+                    data-testid={`badge-dias-internado-${paciente.pkatendimento}`}
+                  >
                     {paciente.diasInternado} {paciente.diasInternado === 1 ? "dia" : "dias"}
-                  </p>
+                  </Badge>
                 </div>
               </div>
             </div>
