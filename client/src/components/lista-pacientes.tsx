@@ -192,7 +192,7 @@ export function ListaPacientes({ pacientes, isLoading }: ListaPacientesProps) {
                   </p>
                   <Badge 
                     variant="outline" 
-                    className={`text-sm px-2 py-1 font-bold ${
+                    className={`text-sm px-2 py-1 font-bold w-[115px] justify-center ${
                       paciente.procedimento?.diaspermanencia 
                         ? (() => {
                             const metade = paciente.procedimento.diaspermanencia / 2;
