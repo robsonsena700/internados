@@ -4,6 +4,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { FiltrosPacientes } from "@/components/filtros-pacientes";
 import { CardsIndicadores } from "@/components/cards-indicadores";
 import { ListaPacientes } from "@/components/lista-pacientes";
+import { Footer } from "@/components/footer";
 import type { PacienteInternado, Indicadores, FiltrosPacientes as FiltrosType } from "@shared/schema";
 import { useLocation } from "wouter";
 
@@ -131,13 +132,14 @@ export default function Dashboard() {
     : pacientes;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <DashboardHeader />
-      <main className="w-full px-4 py-6 space-y-6">
+      <main className="flex-1 w-full px-4 py-6 space-y-6">
         {showFiltros && <FiltrosPacientes filtros={filtros} onFiltrosChange={setFiltros} />}
         {showIndicadores && <CardsIndicadores indicadores={indicadores} isLoading={isLoadingIndicadores} />}
         <ListaPacientes pacientes={pacientesFiltrados} isLoading={isLoadingPacientes} />
       </main>
+      <Footer />
     </div>
   );
 }

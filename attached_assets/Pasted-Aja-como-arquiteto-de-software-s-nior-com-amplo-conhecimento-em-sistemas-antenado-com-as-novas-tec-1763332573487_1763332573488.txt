@@ -5,7 +5,7 @@ Faça uma aplicação para exibição de dashboard de acompanhamento de paciente
 Desenvolva a aplicação em react e node js, sempre responsiva de forma a poder ser utilizada em celulares e tablets.
 
 Não crie nenhum banco de dados nem estrutura de migrations, pois vamos utilizar um banco de dados existentes com tabelas e estruturas já criadas. Vou lhe passar as estruturas das tabelas para que seja feito o mapeamento dos dados. 
-Você deve preparar a aplicação para conectar o banco de dados via variáveis de ambiente pelo secrets do replit.
+Você deve preparar a aplicação para conectar o banco de dados via variáveis de ambiente.
 
 Crie um sistema de autenticação simples de usuário e senha com os perfis admin e operador, sendo o usuário admin tendo senha @dm1n e o usuário operador com senha Oper4321. Deixa a autenticação preparada para ser trocada em breve por um sistema mais robusto.
 

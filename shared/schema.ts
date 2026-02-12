@@ -8,10 +8,11 @@ import { z } from "zod";
 // Tabela de pacientes
 export const pacientes = pgTable("cdg_paciente", {
   pkpaciente: serial("pkpaciente").primaryKey(),
-  nome: text("nome"),
+  paciente: text("paciente"),
   cpf: text("cpf"),
   datanascimento: date("datanascimento"),
-  sexo: char("sexo", { length: 1 }),
+  fksexo: integer("fksexo"),
+  foto: text("foto"),
 }, { schema: "sotech" });
 
 // Tabela de profissionais/médicos
@@ -25,31 +26,41 @@ export const intervenientes = pgTable("cdg_interveniente", {
 // Tabela de unidades de saúde
 export const unidadesSaude = pgTable("cdg_unidadesaude", {
   pkunidadesaude: serial("pkunidadesaude").primaryKey(),
-  descricao: text("descricao"),
+  unidadesaude: text("unidadesaude"),
   cnes: text("cnes"),
 }, { schema: "sotech" });
 
 // Tabela de leitos
 export const leitos = pgTable("cdg_leito", {
   pkleito: serial("pkleito").primaryKey(),
-  descricao: text("descricao"),
-  numero: text("numero"),
-  // Adicionar chaves estrangeiras para Posto e Enfermaria se existirem
-  // fkposto: integer("fkposto"),
-  // fkenfermaria: integer("fkenfermaria"),
+  codleito: text("codleito"),
+  fkenfermaria: integer("fkenfermaria"),
+}, { schema: "sotech" });
+
+// Tabela de enfermarias
+export const enfermarias = pgTable("cdg_enfermaria", {
+  pkenfermaria: serial("pkenfermaria").primaryKey(),
+  enfermaria: text("enfermaria"),
+  fkposto: integer("fkposto"),
+}, { schema: "sotech" });
+
+// Tabela de postos
+export const postos = pgTable("cdg_posto", {
+  pkposto: serial("pkposto").primaryKey(),
+  posto: text("posto"),
 }, { schema: "sotech" });
 
 // Tabela de especialidades
 export const especialidades = pgTable("tbn_especialidade", {
   pkespecialidade: serial("pkespecialidade").primaryKey(),
-  descricao: text("descricao"),
+  especialidade: text("especialidade"),
 }, { schema: "sotech" });
 
 // Tabela de procedimentos (tbl_procedimento - legado)
 export const procedimentos = pgTable("tbl_procedimento", {
   pkprocedimento: serial("pkprocedimento").primaryKey(),
-  descricao: text("descricao"),
-  codigo: text("codigo"),
+  procedimento: text("procedimento"),
+  codprocedimento: text("codprocedimento"),
 }, { schema: "sotech" });
 
 // Tabela de procedimentos (tbn_procedimento - tabela SUS)
@@ -87,6 +98,7 @@ export const atendimentos = pgTable("ate_atendimento", {
   fktipoatendimento: integer("fktipoatendimento").notNull(),
   fkpaciente: integer("fkpaciente").notNull(),
   fkprofissionalatendimento: integer("fkprofissionalatendimento"),
+  fkprofissionalsolicitante: integer("fkprofissionalsolicitante"),
   fkunidadesaude: integer("fkunidadesaude").notNull(),
   fkleito: integer("fkleito"),
   fkespecialidade: integer("fkespecialidade"),

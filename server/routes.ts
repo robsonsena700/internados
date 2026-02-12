@@ -33,6 +33,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.get("/api/auth/me", (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Não autenticado" });
+    }
+    res.json(req.session.user);
+  });
+
   // Endpoints protegidos - requerem autenticação
   app.use("/api/medicos", requireAuth);
   app.use("/api/pacientes", requireAuth);
@@ -49,7 +56,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await pool.query(
         `SELECT DISTINCT i.pkinterveniente as id, i.interveniente as nome 
          FROM sotech.cdg_interveniente i
-         INNER JOIN sotech.ate_atendimento a ON a.fkprofissionalsolicitante = i.pkinterveniente
+         INNER JOIN sotech.ate_atendimento a ON a.fkprofissionalsolicitante = i.pkinterveniente OR a.fkprofissionalatendimento = i.pkinterveniente
          WHERE a.fktipoatendimento = 2
            AND a.datasaida IS NULL
            AND a.ativo = true
@@ -284,38 +291,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let paramIndex = 1;
 
       if (medicoId) {
-        query += ` AND a.fkprofissionalatendimento = $${paramIndex}`;
-        params.push(parseInt(medicoId as string));
+        query += ` AND (a.fkprofissionalatendimento = $${paramIndex} OR a.fkprofissionalsolicitante = $${paramIndex})`;
+        const id = parseInt(medicoId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID do médico inválido" });
+        params.push(id);
         paramIndex++;
       }
 
       if (pacienteId) {
         query += ` AND a.fkpaciente = $${paramIndex}`;
-        params.push(parseInt(pacienteId as string));
+        const id = parseInt(pacienteId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID do paciente inválido" });
+        params.push(id);
         paramIndex++;
       }
 
       if (unidadeId) {
         query += ` AND a.fkunidadesaude = $${paramIndex}`;
-        params.push(parseInt(unidadeId as string));
+        const id = parseInt(unidadeId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID da unidade inválido" });
+        params.push(id);
         paramIndex++;
       }
 
       if (postoId) {
         query += ` AND po.pkposto = $${paramIndex}`;
-        params.push(parseInt(postoId as string));
+        const id = parseInt(postoId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID do posto inválido" });
+        params.push(id);
         paramIndex++;
       }
 
       if (especialidadeId) {
         query += ` AND a.fkespecialidade = $${paramIndex}`;
-        params.push(parseInt(especialidadeId as string));
+        const id = parseInt(especialidadeId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID da especialidade inválido" });
+        params.push(id);
         paramIndex++;
       }
 
       if (procedimentoId) {
         query += ` AND a.fkprocedimentosolicitado = $${paramIndex}`;
-        params.push(parseInt(procedimentoId as string));
+        const id = parseInt(procedimentoId as string);
+        if (isNaN(id)) return res.status(400).json({ message: "ID do procedimento inválido" });
+        params.push(id);
         paramIndex++;
       }
 
@@ -358,7 +377,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let paramIndex = 1;
 
       if (medicoId) {
-        baseWhere += ` AND a.fkprofissionalatendimento = $${paramIndex}`;
+        baseWhere += ` AND (a.fkprofissionalatendimento = $${paramIndex} OR a.fkprofissionalsolicitante = $${paramIndex})`;
         params.push(parseInt(medicoId as string));
         paramIndex++;
       }
