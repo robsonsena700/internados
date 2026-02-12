@@ -35,7 +35,15 @@ try {
         cd $REMOTE_PATH || { git clone https://github.com/robsonsena700/internados.git $REMOTE_PATH && cd $REMOTE_PATH; }
         git pull origin main
         
-        # Build e Restart com Docker Compose (usando comando moderno 'docker compose')
+        # Criar .env se não existir (para evitar falha no docker compose)
+        if [ ! -f .env ]; then
+            echo "DATABASE_URL=postgres://user:pass@host:5432/db" > .env
+            echo "SESSION_SECRET=$(openssl rand -hex 32)" >> .env
+            echo "ADMIN_USERNAME=admin" >> .env
+            echo "ADMIN_PASSWORD=admin" >> .env
+        fi
+
+        # Build e Restart com Docker Compose
         sudo docker compose down
         sudo docker compose up --build -d
         
@@ -48,9 +56,11 @@ try {
         # Limpeza de imagens antigas
         sudo docker image prune -f
         
-        # Health Check simples (aguarda um pouco mais)
-        echo "Aguardando inicializacao..."
-        sleep 10
+        # Health Check simples (aguarda inicialização)
+        echo "Aguardando inicializacao (30s)..."
+        sleep 30
+        sudo docker ps
+        sudo docker logs internados-app --tail 20
         curl -f http://localhost:3000/api/auth/me || { echo "Falha no Health Check"; exit 1; }
 "@
 
