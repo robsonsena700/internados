@@ -43,8 +43,9 @@ try {
             echo "ADMIN_PASSWORD=admin" >> .env
         fi
 
-        # Build e Restart com Docker Compose
+        # Build e Restart com Docker Compose (Limpeza completa para evitar cache corrompido)
         sudo docker compose down
+        sudo docker system prune -a -f
         sudo docker compose up --build -d
         
         # Aplicar configuração do Nginx
