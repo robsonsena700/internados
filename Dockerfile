@@ -21,19 +21,21 @@ FROM node:20-slim AS runner
 
 WORKDIR /app
 
+# Em produção, precisamos de algumas variáveis para rodar o node_modules corretamente
 ENV NODE_ENV=production
 
 # Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar TODAS as dependências (incluindo as de dev)
-# REMOVEMOS o bundle externo do esbuild para simplificar e garantir que o node_modules seja usado corretamente
+# Instalar TODAS as dependências no runner. 
+# Como usamos --packages=external no esbuild, o node precisa de acesso aos pacotes reais.
 RUN npm install
 
-# Copiar arquivos compilados do builder (incluindo os arquivos individuais se não estivermos usando bundle único)
+# Copiar arquivos compilados do builder
 COPY --from=builder /app/dist ./dist
-# Também precisamos copiar a pasta server se o esbuild não estiver embutindo tudo
+# Copiar o restante do código fonte que pode ser necessário para imports dinâmicos ou referências relativas
 COPY --from=builder /app/server ./server
+COPY --from=builder /app/client ./client
 
 # Expor a porta definida no servidor
 EXPOSE 3000
