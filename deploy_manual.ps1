@@ -18,7 +18,7 @@ try {
     Write-Log "Realizando commit das alterações locais..."
     git add .
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    git commit -m "Deploy automático - $Timestamp" -ErrorAction SilentlyContinue
+    git commit -m "Deploy automatico - $Timestamp"
     Write-Log "Fazendo push para o GitHub (branch main)..."
     git push origin main
     Write-Log "Push concluído com sucesso."
@@ -35,21 +35,23 @@ try {
         cd $REMOTE_PATH || { git clone https://github.com/robsonsena700/internados.git $REMOTE_PATH && cd $REMOTE_PATH; }
         git pull origin main
         
-        # Build e Restart com Docker Compose
-        docker-compose down
-        docker-compose up --build -d
+        # Build e Restart com Docker Compose (usando comando moderno 'docker compose')
+        sudo docker compose down
+        sudo docker compose up --build -d
         
         # Aplicar configuração do Nginx
+        sudo rm -f /etc/nginx/sites-enabled/default
         sudo cp $REMOTE_PATH/nginx.conf /etc/nginx/sites-available/internados
         sudo ln -sf /etc/nginx/sites-available/internados /etc/nginx/sites-enabled/
         sudo nginx -t && sudo systemctl reload nginx
         
         # Limpeza de imagens antigas
-        docker image prune -f
+        sudo docker image prune -f
         
-        # Health Check simples
-        sleep 5
-        curl -f http://localhost:3000/api/auth/me || exit 1
+        # Health Check simples (aguarda um pouco mais)
+        echo "Aguardando inicializacao..."
+        sleep 10
+        curl -f http://localhost:3000/api/auth/me || { echo "Falha no Health Check"; exit 1; }
 "@
 
     ssh -i $SSH_KEY $SERVER $RemoteCommands
