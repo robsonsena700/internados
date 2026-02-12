@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+*.log
+.git
+.vscode
+Dockerfile
+docker-compose.yml
+README.md
+.dockerignore
+package-lock.json
+npm-debug.log
+.replit
+replit.md

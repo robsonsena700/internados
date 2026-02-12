@@ -79,3 +79,51 @@ O arquivo `.env` está incluído no `.gitignore` para garantir que suas credenci
 **Configuração de Sessão:** Tempo de vida da sessão de 24 horas, cookies seguros habilitados em produção, sessões apagadas ao fazer logout.
 
 **Configuração de Segurança:**
+
+O sistema implementa diversas camadas de proteção:
+- **Helmet**: Proteção de headers HTTP contra Clickjacking e XSS.
+- **Rate Limiting**: Limite de 100 requisições por 15 minutos para evitar força bruta.
+- **Bcrypt**: Hashing de senhas para armazenamento seguro.
+- **Sanitização**: Validação rigorosa de inputs com Zod e filtragem de tipos.
+
+## Deployment e Operação
+
+### Docker (Recomendado para Produção)
+
+O projeto está containerizado para garantir consistência entre ambientes.
+
+1. **Build e Execução Local:**
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Arquivos de Configuração:**
+   - [Dockerfile](file:///c:/Users/Robson%20Sena/Documents/Internados-arc/Dockerfile): Multi-stage build para imagem leve (node:slim).
+   - [docker-compose.yml](file:///c:/Users/Robson%20Sena/Documents/Internados-arc/docker-compose.yml): Orquestração do serviço da aplicação.
+   - [.dockerignore](file:///c:/Users/Robson%20Sena/Documents/Internados-arc/.dockerignore): Exclusão de arquivos desnecessários.
+
+### Guia de Deployment no Servidor (144.22.174.109)
+
+1. **Acesso SSH:**
+   Utilize a chave privada fornecida:
+   ```powershell
+   ssh -i "C:\Users\Robson Sena\Documents\ISFat\database\ssh\ssh-key-2026-01-30.key" ubuntu@144.22.174.109
+   ```
+
+2. **Infraestrutura no Servidor:**
+   - **Nginx**: Atua como proxy reverso na porta 80/443. Ver arquivo [nginx.conf](file:///c:/Users/Robson%20Sena/Documents/Internados-arc/nginx.conf).
+   - **SSL**: Certificados Let's Encrypt via Certbot.
+   - **Firewall**: Portas permitidas: 80 (HTTP), 443 (HTTPS), 22 (SSH).
+
+3. **Automação de Deploy:**
+   Utilize o script [deploy_manual.ps1](file:///c:/Users/Robson%20Sena/Documents/Internados-arc/deploy_manual.ps1) para automatizar todo o processo:
+   - Commit e Push automático.
+   - Atualização remota do código.
+   - Rebuild dos containers Docker.
+   - Health check pós-deploy.
+
+## Troubleshooting e Manutenção
+
+- **Logs do Sistema**: `docker logs internados-app -f`
+- **Backup**: O banco de dados é externo, realize backups periódicos via `pg_dump`.
+- **Manutenção**: Atualizações semanais de pacotes via `npm update` e verificação de segurança com `npm audit`.
