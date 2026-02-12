@@ -23,9 +23,12 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Instalar dependências de produção (incluindo dotenv que é necessário no index.js)
+# Copiar package.json primeiro
 COPY package*.json ./
-RUN npm install --omit=dev && npm install dotenv
+
+# Instalar dependências de produção.
+# Forçamos a instalação do dotenv e pg que são essenciais em runtime.
+RUN npm install --omit=dev && npm install dotenv pg
 
 # Copiar arquivos compilados do builder
 COPY --from=builder /app/dist ./dist
