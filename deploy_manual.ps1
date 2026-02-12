@@ -39,6 +39,11 @@ try {
         docker-compose down
         docker-compose up --build -d
         
+        # Aplicar configuração do Nginx
+        sudo cp $REMOTE_PATH/nginx.conf /etc/nginx/sites-available/internados
+        sudo ln -sf /etc/nginx/sites-available/internados /etc/nginx/sites-enabled/
+        sudo nginx -t && sudo systemctl reload nginx
+        
         # Limpeza de imagens antigas
         docker image prune -f
         
