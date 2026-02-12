@@ -28,7 +28,7 @@ export function Footer() {
     : "Data indisponível";
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("/internados/api/auth/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setUser(data))
       .catch(() => setUser(null));

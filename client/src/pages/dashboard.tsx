@@ -23,7 +23,7 @@ export default function Dashboard() {
     const loginParam = params.get('login');
     if (loginParam === 'false') {
       // Auto-login como admin sem mostrar tela de login
-      fetch('/api/auth/login', {
+      fetch('/internados/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
