@@ -26,13 +26,14 @@ ENV NODE_ENV=production
 # Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar TODAS as dependências (incluindo as de dev) para garantir que
-# pacotes como 'dotenv' que foram listados em devDependencies mas usados no bundle
-# ou referenciados pelo index.js compilado estejam presentes.
+# Instalar TODAS as dependências (incluindo as de dev)
+# REMOVEMOS o bundle externo do esbuild para simplificar e garantir que o node_modules seja usado corretamente
 RUN npm install
 
-# Copiar arquivos compilados do builder
+# Copiar arquivos compilados do builder (incluindo os arquivos individuais se não estivermos usando bundle único)
 COPY --from=builder /app/dist ./dist
+# Também precisamos copiar a pasta server se o esbuild não estiver embutindo tudo
+COPY --from=builder /app/server ./server
 
 # Expor a porta definida no servidor
 EXPOSE 3000
