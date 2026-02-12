@@ -52,7 +52,7 @@ try {
         sudo rm -f /etc/nginx/sites-enabled/default
         sudo cp $REMOTE_PATH/nginx.conf /etc/nginx/sites-available/esus.fun
         sudo ln -sf /etc/nginx/sites-available/esus.fun /etc/nginx/sites-enabled/esus.fun
-        sudo nginx -t && sudo systemctl reload nginx
+        sudo nginx -t && sudo systemctl restart nginx
         
         # Limpeza de imagens antigas
         sudo docker image prune -f
@@ -63,7 +63,7 @@ try {
         sudo docker ps
         sudo docker logs internados-app --tail 20
         # Health Check (espera status 401 ou 200, indicando que o servidor responde)
-        curl -I -s -o /dev/null -w "%{http_code}" http://localhost:5002/api/auth/me | grep -E "200|401" || { echo "Falha no Health Check (Servidor não respondeu adequadamente)"; exit 1; }
+        curl -I -s -o /dev/null -w "%{http_code}" http://localhost:5002/api/auth/me | grep -E "200|401" || { echo "Falha no Health Check"; exit 1; }
 "@
 
     ssh -i $SSH_KEY $SERVER $RemoteCommands
