@@ -38,7 +38,7 @@ try {
         # Criar .env se não existir (para evitar falha no docker compose)
         if [ ! -f .env ]; then
             echo "DATABASE_URL=postgres://user:pass@host:5432/db" > .env
-            echo "SESSION_SECRET=$(openssl rand -hex 32)" >> .env
+            echo "SESSION_SECRET=default_secret_key_change_me" >> .env
             echo "ADMIN_USERNAME=admin" >> .env
             echo "ADMIN_PASSWORD=admin" >> .env
         fi
