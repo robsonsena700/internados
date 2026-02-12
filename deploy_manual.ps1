@@ -61,7 +61,7 @@ try {
         sleep 30
         sudo docker ps
         sudo docker logs internados-app --tail 20
-        curl -f http://localhost:3000/api/auth/me || { echo "Falha no Health Check"; exit 1; }
+        curl -f http://localhost:5002/api/auth/me || { echo "Falha no Health Check"; exit 1; }
 "@
 
     ssh -i $SSH_KEY $SERVER $RemoteCommands

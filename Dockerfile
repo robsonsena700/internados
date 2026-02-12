@@ -23,7 +23,7 @@ WORKDIR /app
 
 # Em produção, precisamos de algumas variáveis para rodar o node_modules corretamente
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=5002
 
 # Copiar package.json e package-lock.json
 COPY package*.json ./
@@ -39,6 +39,6 @@ COPY --from=builder /app/server ./server
 COPY --from=builder /app/client ./client
 
 # Expor a porta definida no servidor
-EXPOSE 3000
+EXPOSE 5002
 
 CMD ["node", "dist/index.js"]
