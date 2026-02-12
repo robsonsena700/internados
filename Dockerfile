@@ -23,12 +23,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copiar package.json primeiro
+# Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar dependências de produção.
-# Forçamos a instalação do dotenv e pg que são essenciais em runtime.
-RUN npm install --omit=dev && npm install dotenv pg
+# Instalar TODAS as dependências (incluindo as de dev) para garantir que
+# pacotes como 'dotenv' que foram listados em devDependencies mas usados no bundle
+# ou referenciados pelo index.js compilado estejam presentes.
+RUN npm install
 
 # Copiar arquivos compilados do builder
 COPY --from=builder /app/dist ./dist
