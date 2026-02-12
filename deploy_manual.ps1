@@ -57,7 +57,7 @@ try {
         sudo docker image prune -f
         
         # Health Check simples (aguarda inicialização)
-        echo "Aguardando inicializacao (30s)..."
+        echo "Aguardando inicializacao..."
         sleep 30
         sudo docker ps
         sudo docker logs internados-app --tail 20
